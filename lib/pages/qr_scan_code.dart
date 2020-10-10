@@ -14,10 +14,10 @@ class _QRCodePageState extends State<QRCodePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('扫描'),
+        title: Icon(Icons.aspect_ratio),
         actions: <Widget>[
           IconButton(
-            icon: Icon(Icons.camera),
+            icon: Icon(Icons.table_chart),
             tooltip: "Scan",
             onPressed: () {
               scan(type: ScanType.ALL);
@@ -27,44 +27,57 @@ class _QRCodePageState extends State<QRCodePage> {
       ),
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            FlatButton(
-              color: Colors.blue,
-              highlightColor: Colors.blue[700],
-              colorBrightness: Brightness.dark,
-              splashColor: Colors.grey,
-              child: Text("二维码扫描"),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20.0)),
-              onPressed: () {
-                scan(type: ScanType.QR);
-              },
+            Card(
+//              color: Colors.blue,
+              elevation: 10,
+              margin: EdgeInsets.all(6),
+              child: Container(height: 100,child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  ListTile(
+                      dense: true,
+                      title: Text('不发货面单扫码'),
+                      subtitle: Text("可用于标记各发货批次中现在“不发货”的订单"),
+                      onTap: () {
+                        scan(type: ScanType.QR);
+                      }),
+                ],
+              ),)
             ),
-            FlatButton(
-              color: Colors.blue,
-              highlightColor: Colors.blue[700],
-              colorBrightness: Brightness.dark,
-              splashColor: Colors.grey,
-              child: Text("条形码扫描"),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20.0)),
-              onPressed: () {
-                scan(type: ScanType.OTHER);
-              },
+            Card(
+              elevation: 10,
+              margin: EdgeInsets.all(6),
+              child: Container(height: 100, child:  Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  ListTile(
+                      dense: true,
+                      title: Text('单个面单发货扫码'),
+                      subtitle: Text("可用于单个面单的订单信息查询及发货操作"),
+                      onTap: () {
+                        scan(type: ScanType.OTHER);
+                      }),
+                ],
+              ),)
             ),
-            FlatButton(
-              color: Colors.blue,
-              highlightColor: Colors.blue[700],
-              colorBrightness: Brightness.dark,
-              splashColor: Colors.grey,
-              child: Text("所有码扫描"),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20.0)),
-              onPressed: () {
-                scan(type: ScanType.ALL);
-              },
+            Card(
+              elevation: 10,
+              margin: EdgeInsets.all(6),
+              child: Container(height: 100, child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  ListTile(
+                      dense: true,
+                      title: Text('失效面单扫描'),
+                      subtitle: Text("可用于标记已失效面单"),
+                      onTap: () {
+                        scan(type: ScanType.ALL);
+                      }),
+                ],
+              ),)
             ),
+            Text("提示：如需扫描商家端后台的各类信息修改二维码，请使用左上角的扫一扫即可。"),
             Text(title)
           ],
         ),
