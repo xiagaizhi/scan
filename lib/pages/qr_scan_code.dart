@@ -14,7 +14,15 @@ class _QRCodePageState extends State<QRCodePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Icon(Icons.aspect_ratio),
+        title: new Text('电子面单扫描'),
+        leading: IconButton(
+          icon: new Icon(Icons.aspect_ratio),
+          onPressed: (){
+            scan(type: ScanType.ALL);
+          },
+        ),
+        backgroundColor: Colors.blue,
+        centerTitle: true,
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.table_chart),
