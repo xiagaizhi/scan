@@ -1,9 +1,13 @@
+import 'dart:convert';
+
 import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'no-deliver-result.dart';
-import 'package:scan/base/Application.dart';
-import 'login.dart';
+import 'package:scan/router/Routes.dart';
+import 'package:scan/utils/NavigatorUtil.dart';
+import 'package:scan_plugin/data/scan_config_data.dart';
+import 'package:scan_plugin/data/scan_result_data.dart';
+import 'package:scan_plugin/scan_plugin.dart';
 
 class QRCodePage extends StatefulWidget {
   @override
@@ -20,12 +24,8 @@ class _QRCodePageState extends State<QRCodePage> {
         title: new Text('电子面单扫描'),
         leading: IconButton(
           icon: new Icon(Icons.aspect_ratio),
-          onPressed: (){
-//            scan(type: ScanType.ALL);
-
-            Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-              return Login();
-            }));
+          onPressed: () {
+            scan(type: ScanType.ALL);
           },
         ),
         backgroundColor: Colors.blue,
@@ -35,9 +35,7 @@ class _QRCodePageState extends State<QRCodePage> {
             icon: Icon(Icons.table_chart),
             tooltip: "Scan",
             onPressed: () {
-              Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-                return NoDeliverResult();
-              }));
+              NavigatorUtil.go(context, Routes.noSendConfirm);
             },
           )
         ],
@@ -47,53 +45,59 @@ class _QRCodePageState extends State<QRCodePage> {
           children: <Widget>[
             Card(
 //              color: Colors.blue,
-              elevation: 10,
-              margin: EdgeInsets.all(6),
-              child: Container(height: 100,child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  ListTile(
-                      dense: true,
-                      title: Text('不发货面单扫码'),
-                      subtitle: Text("可用于标记各发货批次中现在“不发货”的订单"),
-                      onTap: () {
-                        scan(type: ScanType.QR);
-                      }),
-                ],
-              ),)
-            ),
+                elevation: 10,
+                margin: EdgeInsets.all(6),
+                child: Container(
+                  height: 100,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      ListTile(
+                          dense: true,
+                          title: Text('不发货面单扫码'),
+                          subtitle: Text("可用于标记各发货批次中现在“不发货”的订单"),
+                          onTap: () {
+                            scan(type: ScanType.QR);
+                          }),
+                    ],
+                  ),
+                )),
             Card(
-              elevation: 10,
-              margin: EdgeInsets.all(6),
-              child: Container(height: 100, child:  Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  ListTile(
-                      dense: true,
-                      title: Text('单个面单发货扫码'),
-                      subtitle: Text("可用于单个面单的订单信息查询及发货操作"),
-                      onTap: () {
-                        scan(type: ScanType.OTHER);
-                      }),
-                ],
-              ),)
-            ),
+                elevation: 10,
+                margin: EdgeInsets.all(6),
+                child: Container(
+                  height: 100,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      ListTile(
+                          dense: true,
+                          title: Text('单个面单发货扫码'),
+                          subtitle: Text("可用于单个面单的订单信息查询及发货操作"),
+                          onTap: () {
+                            scan(type: ScanType.OTHER);
+                          }),
+                    ],
+                  ),
+                )),
             Card(
-              elevation: 10,
-              margin: EdgeInsets.all(6),
-              child: Container(height: 100, child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  ListTile(
-                      dense: true,
-                      title: Text('失效面单扫描'),
-                      subtitle: Text("可用于标记已失效面单"),
-                      onTap: () {
-                        scan(type: ScanType.ALL);
-                      }),
-                ],
-              ),)
-            ),
+                elevation: 10,
+                margin: EdgeInsets.all(6),
+                child: Container(
+                  height: 100,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      ListTile(
+                          dense: true,
+                          title: Text('失效面单扫描'),
+                          subtitle: Text("可用于标记已失效面单"),
+                          onTap: () {
+                            scan(type: ScanType.ALL);
+                          }),
+                    ],
+                  ),
+                )),
             Text("提示：如需扫描商家端后台的各类信息修改二维码，请使用左上角的扫一扫即可。"),
             Text(title)
           ],
@@ -103,33 +107,25 @@ class _QRCodePageState extends State<QRCodePage> {
   }
 
   Future scan({ScanType type = ScanType.QR}) async {
-    ScanOptions options = ScanOptions(strings: {
-      "cancel": "取消",
-      "flash_on": "关灯",
-      "flash_off": "开灯",
-    }, restrictFormat: getQrFormat(type));
+    ScanResultData data;
+    ScanConfigData config = ScanConfigData(
+        isSplashOn: true,
+        isContinuous: true,
+        isNeedButton: true,
+        buttonString: "扫码完毕",
+        tipString: "提示",
+        toastString: "扫码成功",
+        formatType: 1);
     try {
-      var result = await BarcodeScanner.scan(options: options);
-      print(result);
-      title = "type:" + result.type.toString() + "\n";
-      title += "format:" + result.format.toString() + "\n";
-      title += "rawContent:" + result.rawContent.toString() + "\n";
-      title += "formatNote:" + result.formatNote.toString() + "\n";
-      setState(() {});
-    } on PlatformException catch (e) {
-      var result = ScanResult(
-        type: ResultType.Error,
-        format: BarcodeFormat.unknown,
-      );
-
-      if (e.code == BarcodeScanner.cameraAccessDenied) {
-        setState(() {
-          result.rawContent = 'The user did not grant the camera permission!';
-        });
-      } else {
-        result.rawContent = 'Unknown error: $e';
-      }
+      print(config);
+      print(json.encode(config));
+      data = await ScanPlugin.startScan(config);
+    } on PlatformException {
+      print("Failed to get platform version.");
     }
+    if (!mounted) return;
+
+    setState(() {});
   }
 
   List<BarcodeFormat> getQrFormat(ScanType type) {

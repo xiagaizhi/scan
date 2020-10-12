@@ -13,6 +13,7 @@ class _QRCodePageState extends State<NoDeliverResult> {
   var title = "demo";
   var number = '3';
   int _currentIndex = 1;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,8 +21,8 @@ class _QRCodePageState extends State<NoDeliverResult> {
         title: new Text('不发货面单确认'),
         centerTitle: true,
       ),
-      bottomNavigationBar:BottomNavigationBar(
-        items:[
+      bottomNavigationBar: BottomNavigationBar(
+        items: [
           BottomNavigationBarItem(
               icon: Icon(
                 Icons.aspect_ratio,
@@ -36,7 +37,6 @@ class _QRCodePageState extends State<NoDeliverResult> {
               title: new Text(
                 '确认提交',
               )),
-
         ],
         //这是底部导航栏自带的位标属性，表示底部导航栏当前处于哪个导航标签。给他一个初始值0，也就是默认第一个标签页面。
         currentIndex: _currentIndex,
@@ -49,7 +49,6 @@ class _QRCodePageState extends State<NoDeliverResult> {
         },
       ),
       body: Center(
-
         child: ListView(
           children: <Widget>[
             Container(
@@ -215,17 +214,6 @@ class _ListItem2 extends StatelessWidget {
     );
   }
 }
-
-
-
-
-
-
-
-
-
-
-
 
 class _Suffix extends StatelessWidget {
   final String text;
