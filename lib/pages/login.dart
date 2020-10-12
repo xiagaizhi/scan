@@ -15,6 +15,7 @@ class _Login extends State<Login> {
 //焦点
   FocusNode _focusNodeUserName = new FocusNode();
   FocusNode _focusNodePassWord = new FocusNode();
+  FocusNode _focusNodeCode = new FocusNode();
 
   //用户名输入框控制器，此控制器可以监听用户名输入框操作
   TextEditingController _userNameController = new TextEditingController();
@@ -24,6 +25,7 @@ class _Login extends State<Login> {
 
   var _password = ''; //用户名
   var _username = ''; //密码
+  var _phoneCode = ''; //验证码
   var _isShowPwd = false; //是否显示密码
   var _isShowClear = false; //是否显示输入框尾部的清除按钮
   var _isLoginWay = true; //判断是 密码登陆还是验证码登陆
@@ -56,6 +58,7 @@ class _Login extends State<Login> {
     //设置焦点监听
     _focusNodeUserName.addListener(_focusNodeListener);
     _focusNodePassWord.addListener(_focusNodeListener);
+    _focusNodeCode.addListener(_focusNodeListener);
     //监听用户名框的输入改变
     _userNameController.addListener(() {
       print(_userNameController.text);
@@ -77,6 +80,7 @@ class _Login extends State<Login> {
     // 移除焦点监听
     _focusNodeUserName.removeListener(_focusNodeListener);
     _focusNodePassWord.removeListener(_focusNodeListener);
+    _focusNodeCode.removeListener(_focusNodeListener);
     _userNameController.dispose();
     super.dispose();
   }
@@ -121,10 +125,19 @@ class _Login extends State<Login> {
     }
     return null;
   }
+  /// 获取手机验证码
+  getCode(){
+
+  }
+
+  /// 调用登陆接口
+  login(){
+
+  }
 
   @override
   Widget build(BuildContext context) {
-    // logo 图片区域
+    /// logo 图片区域
     Widget logoImageArea = new Container(
       alignment: Alignment.topCenter,
       // 设置图片为圆形
@@ -142,15 +155,20 @@ class _Login extends State<Login> {
         fit: BoxFit.cover,
       )),
     );
-    // logo名称
+    /// logo名称
     Widget logoName = new Container(
         margin: EdgeInsets.only(top: 10),
         height: 20.0,
         child: Text(
           "阳光校园商家端",
           textAlign: TextAlign.center,
+          style:TextStyle(
+            fontSize:18.0, // 文字大小
+            color:Colors.grey, // 文字颜色
+              fontWeight: FontWeight.w700
+          ),
         ));
-    //密码登陆  验证码登陆
+    ///密码登陆  验证码登陆
     Widget bottomArea = new Container(
       margin: EdgeInsets.only(right: 70, left: 80),
       child: new Row(
@@ -172,8 +190,7 @@ class _Login extends State<Login> {
               });
             },
           ),
-
-          //垂直分割线
+          ///垂直分割线
           SizedBox(
             width: 1,
             height: 14,
@@ -200,7 +217,7 @@ class _Login extends State<Login> {
       ),
     );
 
-    //输入文本框区域
+    ///输入文本框区域
     Widget inputTextArea = new Container(
       margin: EdgeInsets.only(left: 20, right: 20),
       decoration: new BoxDecoration(
@@ -266,14 +283,12 @@ class _Login extends State<Login> {
                     },
                   )
                 : new TextFormField(
+                    focusNode: _focusNodeCode,
                     keyboardType: TextInputType.number,
                     decoration: InputDecoration(
                         labelText: "验证码",
                         hintText: "请输入验证码",
                         prefixIcon: Icon(Icons.lock),
-
-                        // 是否显示密码
-                        // 是否显示密码
                         suffixIcon: RaisedButton(
                             child: Text(_isCode
                                 ? _codeText
@@ -283,14 +298,14 @@ class _Login extends State<Login> {
                                 if (_isCode) {
                                   this._showTimer();
                                   _isCode = false;
+                                  getCode();
                                 }
                               });
                             })),
                     obscureText: false,
-
                     //保存数据
                     onSaved: (String value) {
-                      _password = value;
+                      _phoneCode = value;
                     },
                   )
           ],
@@ -298,7 +313,7 @@ class _Login extends State<Login> {
       ),
     );
 
-    // 登录按钮区域
+    /// 登录按钮区域
     Widget loginButtonArea = new Container(
       margin: EdgeInsets.only(left: 20, right: 20),
       height: 45.0,
@@ -315,12 +330,14 @@ class _Login extends State<Login> {
           //点击登录按钮，解除焦点，回收键盘
           _focusNodePassWord.unfocus();
           _focusNodeUserName.unfocus();
+          _focusNodeCode.unfocus();
 
           if (_formKey.currentState.validate()) {
             //只有输入通过验证，才会执行这里
             _formKey.currentState.save();
             //todo 登录操作
             print("$_username + $_password");
+            login();
           }
         },
       ),
@@ -335,27 +352,24 @@ class _Login extends State<Login> {
           print("点击了空白区域");
           _focusNodePassWord.unfocus();
           _focusNodeUserName.unfocus();
+          _focusNodeCode.unfocus();
         },
         child: new ListView(
           children: <Widget>[
             new SizedBox(
-//              height: ScreenUtil().setHeight(80),
               height: 80,
             ),
             logoImageArea,
             logoName,
             new SizedBox(
-//              height: ScreenUtil().setHeight(70),
               height: 10,
             ),
             bottomArea,
             new SizedBox(
-//              height: ScreenUtil().setHeight(80),
               height: 10,
             ),
             inputTextArea,
             new SizedBox(
-//              height: ScreenUtil().setHeight(80),
               height: 40,
             ),
             loginButtonArea,
