@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -24,7 +26,30 @@ class _Login extends State<Login> {
   var _username = ''; //密码
   var _isShowPwd = false; //是否显示密码
   var _isShowClear = false; //是否显示输入框尾部的清除按钮
-  var _isLoginWay = true;
+  var _isLoginWay = true; //判断是 密码登陆还是验证码登陆
+  var _isCode = true; //判断是否显示倒计时
+  var _codeText = "获取验证码";
+  int _codeNumber = 10;
+
+  //倒计时
+  _showTimer() {
+    Timer t;
+    t = Timer.periodic(Duration(milliseconds: 1000), (timer) {
+      setState(() {
+        this._codeNumber--;
+        print("_codeNumber" + this._codeNumber.toString());
+      });
+      if (this._codeNumber == 0) {
+        t.cancel(); //清除定时器
+        setState(() {
+          this._isCode = true;
+          this._codeNumber = 10;
+          this._codeText = "重新发送验证码";
+        });
+      }
+    });
+  }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -111,19 +136,20 @@ class _Login extends State<Login> {
 //          fit: BoxFit.cover,
 //        ),
           child: Image.network(
-            'http://pic1.win4000.com/pic/c/cf/cdc983699c.jpg',
-            height: 100,
-            width: 100,
-            fit: BoxFit.cover,
-          )
-      ),
+        'http://pic1.win4000.com/pic/c/cf/cdc983699c.jpg',
+        height: 100,
+        width: 100,
+        fit: BoxFit.cover,
+      )),
     );
     // logo名称
     Widget logoName = new Container(
-      margin: EdgeInsets.only(top: 10),
-      height: 20.0,
-      child:Text("阳光校园商家端",textAlign: TextAlign.center,)
-    );
+        margin: EdgeInsets.only(top: 10),
+        height: 20.0,
+        child: Text(
+          "阳光校园商家端",
+          textAlign: TextAlign.center,
+        ));
     //密码登陆  验证码登陆
     Widget bottomArea = new Container(
       margin: EdgeInsets.only(right: 70, left: 80),
@@ -135,7 +161,7 @@ class _Login extends State<Login> {
             child: Text(
               "密码登陆",
               style: TextStyle(
-                color: _isLoginWay?Colors.blue[400]:Colors.grey,
+                color: _isLoginWay ? Colors.blue[400] : Colors.grey,
                 fontSize: 16.0,
               ),
             ),
@@ -159,7 +185,7 @@ class _Login extends State<Login> {
             child: Text(
               "验证码登陆",
               style: TextStyle(
-                color: !_isLoginWay?Colors.blue[400]:Colors.grey,
+                color: !_isLoginWay ? Colors.blue[400] : Colors.grey,
                 fontSize: 16.0,
               ),
             ),
@@ -168,7 +194,6 @@ class _Login extends State<Login> {
               setState(() {
                 _isLoginWay = false;
               });
-
             },
           )
         ],
@@ -213,31 +238,61 @@ class _Login extends State<Login> {
                 _username = value;
               },
             ),
-            new TextFormField(
-              focusNode: _focusNodePassWord,
-              decoration: InputDecoration(
-                  labelText: "密码",
-                  hintText: "请输入密码",
-                  prefixIcon: Icon(Icons.lock),
-                  // 是否显示密码
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                        (_isShowPwd) ? Icons.visibility : Icons.visibility_off),
-                    // 点击改变显示或隐藏密码
-                    onPressed: () {
-                      setState(() {
-                        _isShowPwd = !_isShowPwd;
-                      });
+            _isLoginWay
+                ? new TextFormField(
+                    focusNode: _focusNodePassWord,
+                    decoration: InputDecoration(
+                        labelText: "密码",
+                        hintText: "请输入密码",
+                        prefixIcon: Icon(Icons.lock),
+                        // 是否显示密码
+                        suffixIcon: IconButton(
+                          icon: Icon((_isShowPwd)
+                              ? Icons.visibility
+                              : Icons.visibility_off),
+                          // 点击改变显示或隐藏密码
+                          onPressed: () {
+                            setState(() {
+                              _isShowPwd = !_isShowPwd;
+                            });
+                          },
+                        )),
+                    obscureText: !_isShowPwd,
+                    //密码验证
+                    validator: validatePassWord,
+                    //保存数据
+                    onSaved: (String value) {
+                      _password = value;
                     },
-                  )),
-              obscureText: !_isShowPwd,
-              //密码验证
-              validator: validatePassWord,
-              //保存数据
-              onSaved: (String value) {
-                _password = value;
-              },
-            )
+                  )
+                : new TextFormField(
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                        labelText: "验证码",
+                        hintText: "请输入验证码",
+                        prefixIcon: Icon(Icons.lock),
+
+                        // 是否显示密码
+                        // 是否显示密码
+                        suffixIcon: RaisedButton(
+                            child: Text(_isCode
+                                ? _codeText
+                                : "" + this._codeNumber.toString() + 's'),
+                            onPressed: () {
+                              setState(() {
+                                if (_isCode) {
+                                  this._showTimer();
+                                  _isCode = false;
+                                }
+                              });
+                            })),
+                    obscureText: false,
+
+                    //保存数据
+                    onSaved: (String value) {
+                      _password = value;
+                    },
+                  )
           ],
         ),
       ),
@@ -271,7 +326,6 @@ class _Login extends State<Login> {
       ),
     );
 
-
     return Scaffold(
       backgroundColor: Colors.white,
       // 外层添加一个手势，用于点击空白部分，回收键盘
@@ -286,7 +340,7 @@ class _Login extends State<Login> {
           children: <Widget>[
             new SizedBox(
 //              height: ScreenUtil().setHeight(80),
-            height: 80,
+              height: 80,
             ),
             logoImageArea,
             logoName,
@@ -305,7 +359,6 @@ class _Login extends State<Login> {
               height: 40,
             ),
             loginButtonArea,
-
           ],
         ),
       ),
