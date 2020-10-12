@@ -1,6 +1,8 @@
 import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'no-deliver-result.dart';
+import 'package:scan/base/Application.dart';
 
 class QRCodePage extends StatefulWidget {
   @override
@@ -28,7 +30,9 @@ class _QRCodePageState extends State<QRCodePage> {
             icon: Icon(Icons.table_chart),
             tooltip: "Scan",
             onPressed: () {
-              scan(type: ScanType.ALL);
+              Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+                return NoDeliverResult();
+              }));
             },
           )
         ],
