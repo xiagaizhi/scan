@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'no-deliver-result.dart';
 import 'package:scan/base/Application.dart';
+import 'login.dart';
 
 class QRCodePage extends StatefulWidget {
   @override
@@ -20,7 +21,11 @@ class _QRCodePageState extends State<QRCodePage> {
         leading: IconButton(
           icon: new Icon(Icons.aspect_ratio),
           onPressed: (){
-            scan(type: ScanType.ALL);
+//            scan(type: ScanType.ALL);
+
+            Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+              return Login();
+            }));
           },
         ),
         backgroundColor: Colors.blue,
