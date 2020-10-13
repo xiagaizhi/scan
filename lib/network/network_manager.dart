@@ -68,7 +68,8 @@ class HttpManager {
   Future<ResultData> post(url, params) async {
     Response response;
     try {
-      print("httpUrl:"+url);
+      print("httpUrl:"+url );
+      print("params:"+params.toString());
       response = await _dio.post(url, data: params);
 
     } on DioError catch (e) {
