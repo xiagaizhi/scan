@@ -4,8 +4,13 @@ import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:scan/model/code_entity.dart';
+import 'package:scan/model/result_data.dart';
+import 'package:scan/model/result_data.dart';
 import 'package:scan/network/network_manager.dart';
 import 'package:scan/network/ienv.dart';
+import 'dart:convert';
+import 'dart:typed_data';
 
 /// 不发货面单结果
 
@@ -35,6 +40,8 @@ class _Login extends State<Login> {
   var _isCode = true; //判断是否显示倒计时
   var _codeText = "获取验证码";
   int _codeNumber = 10;
+
+  var _imgCodealue = "";//图形验证码的值
 
   //倒计时
   _showTimer() {
@@ -129,17 +136,81 @@ class _Login extends State<Login> {
     return null;
   }
 
-  /// 获取手机验证码
-  getCode() {
-    HttpManager.getInstance(type: UrlType.sso)
-        .post('/verify-code/get', {'param': null, 'type': 'SMS_VERIFY_CODE'});
+  //图形验证码
+  CodeBeanData imgCode;
+  Uint8List imgBytes;
+
+  //短信验证码
+  CodeBeanData msgCode;
+
+  /// 获取图形验证码
+  getImgCode() async {
+    if(this._username==null||this._username==''){
+
+      return;
+    }
+    ResultData data = await HttpManager.getInstance(type: UrlType.sso)
+        .post('/verify-code/get', {'type': 'NUMBER_IMG_CAPTCHA'});
+
+    print(data.status);
+    imgCode = new CodeBeanData();
+    imgCode.fromJson(data.data);
+    setState(() {
+      var bytes =
+          imgCode.value.split(',')[1]; //'iVBORw0KGgoAAAANSUhEUg.....' 正确格式
+      imgBytes = Base64Decoder().convert(bytes);
+    });
+
+    print(imgCode.value);
   }
 
-  /// 调用登陆接口
-  login() {}
+//  var _password = ''; //用户名
+//  var _username = ''; //密码
+//  var _phoneCode = ''; //验证码
+//  var _isShowPwd = false; //是否显示密码
+//  var _isShowClear = false; //是否显示输入框尾部的清除按钮
+//  var _isLoginWay = true; //判断是 密码登陆还是验证码登陆
+//  var _isCode = true; //判断是否显示倒计时
+//  var _codeText = "获取验证码";
+//  int _codeNumber = 10;
+//
+//  var _imgCodealue = "";//图形验证码的值
+
+  /// 获取手机验证码
+  getCode() async {
+
+    var param = {
+      "mobile":this._username,
+      "vcKey":imgCode.key,
+      "vcValue":_imgCodealue
+    };
+
+    ResultData data = await HttpManager.getInstance(type: UrlType.sso)
+        .post('/verify-code/get', {'param':param,'type': 'SMS_VERIFY_CODE_V2'});
+    print(data.status);
+    msgCode = new CodeBeanData();
+    msgCode.fromJson(data.data);
+  }
+
+  /// 调用登陆接口 --
+  login() async {
+    var param = {
+      'client':'',
+      'mobile':this._username,
+      'password':this._password,
+      'vc':this._phoneCode,
+      'vcKey':msgCode.key
+    };
+    ResultData data = await HttpManager.getInstance(type: UrlType.sso)
+        .post(_isLoginWay?'/login/mobile':'/login/mobile-vc', param);
+
+
+    print("login:"+data.data);
+  }
 
   @override
   Widget build(BuildContext context) {
+//    Uint8List bytes = BASE64.decode(imgCode.value);
     /// logo 图片区域
     Widget logoImageArea = new Container(
       alignment: Alignment.topCenter,
@@ -300,13 +371,11 @@ class _Login extends State<Login> {
                               color: Colors.white,
                               elevation: 0.0,
                               child: Text(
-                                _isCode
-                                    ? _codeText
-                                    : "" + this._codeNumber.toString() + 's',
-                                style:
-                                    TextStyle(fontSize: 14, color: Colors.blue),
+                                _isCode? _codeText: "" + this._codeNumber.toString() + 's',
+                                style:TextStyle(fontSize: 14, color: Colors.blue),
                               ),
                               onPressed: () {
+                                getImgCode();
                                 showCupertinoDialog(
                                     context: context,
                                     builder: (context) {
@@ -319,82 +388,106 @@ class _Login extends State<Login> {
                                               style: TextStyle(fontSize: 16),
                                             ),
                                             content: SizedBox(
-                                              width: 230.0,
-                                              height: 80.0,
-                                              child: Row(
-                                                children: <Widget>[
-                                                  Container(
-                                                    width: 115.0,
-                                                    height: 80.0,
-                                                    alignment: Alignment.bottomCenter,
-                                                    child: Column(
+                                                width: 230.0,
+                                                height: 90.0,
+                                                child: Column(
+                                                  children: <Widget>[
+                                                    new SizedBox(
+                                                      height: 10,
+                                                    ),
+                                                    Row(
                                                       children: <Widget>[
-                                                        new SizedBox(
-                                                          height: 20,
+                                                        Container(
+                                                          width: 105.0,
+                                                          height: 80.0,
+                                                          alignment: Alignment.bottomCenter,
+                                                          child: Column(
+                                                            children: <Widget>[
+                                                              Container(
+                                                                width: 105.0,
+                                                                height: 46.0,
+                                                                margin:EdgeInsets.all(0),
+                                                                child: imgBytes !=null? new Image.memory(imgBytes): Text('重新获取'),
+                                                              ),
+                                                              Container(
+                                                                height: 30.0,
+                                                                width: 105.0,
+                                                                padding: EdgeInsets.only(top:10.0),
+                                                                child:GestureDetector(
+                                                                  child: Text(
+                                                                    "换一换",
+                                                                    style: TextStyle(fontSize:14,color: Colors.grey),
+                                                                  ),
+                                                                  onTap: () {
+                                                                    setState(() {this.getImgCode();
+                                                                    });
+                                                                  },
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
                                                         ),
-                                                        Text('VRVT'),
-                                                        Text('换一换换一换')
+                                                        new SizedBox(
+                                                          width: 20,
+                                                        ),
+                                                        Container(
+                                                          width: 105.0,
+                                                          height: 56.0,
+                                                          alignment: Alignment.bottomCenter,
+                                                          child:new TextFormField(
+                                                            maxLength: 4,
+                                                            decoration: InputDecoration(
+                                                              contentPadding:EdgeInsets.only(top: 0.0,left:20.0,bottom:0.0),
+                                                              hintText: "输入字符",
+                                                              enabledBorder:OutlineInputBorder(
+                                                                //未选中时候的颜色
+                                                                borderRadius:BorderRadius.circular(5.0),
+                                                                borderSide: BorderSide(color: Colors.blue[400]),
+                                                              ),
+                                                              focusedBorder:OutlineInputBorder(
+                                                                //选中时外边框颜色
+                                                                borderRadius:BorderRadius.circular(5.0),
+                                                                borderSide: BorderSide(
+                                                                    color: Colors.blue[400]),
+                                                              ),
+                                                            ),
+                                                            onSaved: (String
+                                                                value) {
+                                                              _imgCodealue = value;
+                                                            },
+                                                          ),
+                                                        ),
                                                       ],
                                                     ),
-                                                  ),
-
-                                                  Container(
-                                                    width: 115.0,
-                                                    height: 80.0,
-                                                    alignment: Alignment.bottomCenter,
-                                                    child: new TextFormField(
-//                                                      maxLength: 4,
-                                                      decoration:InputDecoration(
-                                                        contentPadding: EdgeInsets.only(top: 0.0,left: 24.0,bottom: 0.0),
-                                                        hintText: "输入字符",
-                                                        enabledBorder:OutlineInputBorder(
-                                                          //未选中时候的颜色
-                                                          borderRadius:BorderRadius.circular(5.0),
-                                                          borderSide:BorderSide(color: Color(0xff9e51ff),
-                                                          ),
-                                                        ),
-                                                        focusedBorder:
-                                                            OutlineInputBorder(
-                                                          //选中时外边框颜色
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                      5.0),
-                                                          borderSide:
-                                                              BorderSide(
-                                                            color: Color(
-                                                                0xff9e51ff),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      onSaved:
-                                                          (String value) {},
-                                                    ),
-
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
+                                                  ],
+                                                )),
                                             actions: <Widget>[
                                               CupertinoDialogAction(
                                                 child: Text('取消'),
-                                                onPressed: () {},
+                                                onPressed: () {
+                                                  Navigator.of(context).pop('cancel');
+                                                },
                                               ),
                                               CupertinoDialogAction(
                                                 child: Text('确认'),
-                                                onPressed: () {},
+                                                onPressed: () {
+                                                  setState(() {
+                                                    Navigator.of(context).pop('ok');
+                                                    if (_isCode) {
+                                                      this._showTimer();
+                                                      _isCode = false;
+                                                      getCode();
+                                                    }
+                                                  });
+                                                },
                                               ),
                                             ],
-                                          ));
+                                          )
+                                      );
                                     });
-//                                setState(() {
-//                                  if (_isCode) {
-//                                    this._showTimer();
-//                                    _isCode = false;
-//                                    getCode();
-//                                  }
-//                                });
-                              })),
+                              }
+                              )
+                      ),
                       obscureText: false,
                       //保存数据
                       onSaved: (String value) {

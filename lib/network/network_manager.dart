@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:scan/model/result_data.dart';
 import 'package:scan/network/response_interceptor.dart';
+import 'package:scan/platform/platform_log.dart';
 
 import 'config.dart';
 import 'ienv.dart';
@@ -67,7 +68,9 @@ class HttpManager {
   Future<ResultData> post(url, params) async {
     Response response;
     try {
+      print("httpUrl:"+url);
       response = await _dio.post(url, data: params);
+
     } on DioError catch (e) {
       print(e);
     }
