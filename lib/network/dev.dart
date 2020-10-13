@@ -1,5 +1,3 @@
-
-
 import 'ienv.dart';
 
 class Dev implements IEnv {
@@ -28,10 +26,11 @@ class Dev implements IEnv {
     UrlType.schoolApp: '//school.dev-ag.gzygxy.com/',
     UrlType.h5App: '../../',
     UrlType.http: 'http:',
+    UrlType.logistics: "//logistics.dev-ag.ygxy.com/"
   };
 
   @override
   String getUrl(UrlType type) {
-    return map[UrlType.http]+map[type];
+    return map[UrlType.http] + map[type];
   }
 }

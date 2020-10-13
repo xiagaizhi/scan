@@ -11,4 +11,10 @@ class ResponseInterceptor extends InterceptorsWrapper {
     }
     return super.onResponse(response);
   }
+
+  @override
+  Future onRequest(RequestOptions onRequest) {
+    print(onRequest.baseUrl + onRequest.path + onRequest.data.toString());
+    return super.onRequest(onRequest);
+  }
 }

@@ -27,5 +27,6 @@ enum UrlType {
   ossRoot,
   schoolApp,
   h5App,
-  http
+  http,
+  logistics
 }

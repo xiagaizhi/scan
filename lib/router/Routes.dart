@@ -24,9 +24,8 @@ class Routes {
 
   static void configureRoutes(Router router) {
     /// 第一个参数是路由地址，第二个参数是页面跳转和传参，第三个参数是默认的转场动画，可以看上图
-    router.define(root,
-        handler: RouteHandlers.normalHandler(new QRCodePage()));
-    router.define(noSendConfirm, handler: RouteHandlers.normalHandler(new NoSendConFirmPage()));
+    router.define(root, handler: RouteHandlers.normalHandler(new QRCodePage()));
+    router.define(noSendConfirm, handler: RouteHandlers.noSendHandler);
     router.notFoundHandler = new Handler(
         handlerFunc: (BuildContext context, Map<String, List<String>> params) {
       print("ROUTE WAS NOT FOUND !!!");

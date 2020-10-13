@@ -75,6 +75,7 @@ class HttpManager {
     } on DioError catch (e) {
       print(e);
     }
+    print(response);
     return response.data;
   }
 }

@@ -5,11 +5,12 @@ class ConvertUtil {
     return jsonEncode(Utf8Encoder().convert(originalCn));
   }
 
-  static String decode(String encodeCn) {
+  static dynamic decode(String encodeCn) {
     var list = List<int>();
     jsonDecode(encodeCn).forEach(list.add);
     String value = Utf8Decoder().convert(list);
-    return value;
+    var jsonString = json.decode(value);
+    return jsonString;
   }
 
   static int string2int(String str) {

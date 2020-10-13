@@ -1,22 +1,37 @@
 import 'dart:convert';
 
-import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:scan/model/result_data.dart';
+import 'package:scan/network/network_manager.dart';
 import 'package:scan/router/Routes.dart';
 import 'package:scan/utils/NavigatorUtil.dart';
+import 'package:scan_plugin/call_back.dart';
 import 'package:scan_plugin/data/scan_config_data.dart';
 import 'package:scan_plugin/data/scan_result_data.dart';
 import 'package:scan_plugin/scan_plugin.dart';
 import 'package:scan/pages/login.dart';
+import 'package:scan/network/ienv.dart';
 
 class QRCodePage extends StatefulWidget {
   @override
   _QRCodePageState createState() => _QRCodePageState();
 }
 
-class _QRCodePageState extends State<QRCodePage> {
+class _QRCodePageState extends State<QRCodePage> with ICallBack {
   var title = "demo";
+
+  @override
+  void initState() {
+    super.initState();
+    ScanPlugin.register(this);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    ScanPlugin.remove(this);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +42,6 @@ class _QRCodePageState extends State<QRCodePage> {
           icon: new Icon(Icons.aspect_ratio),
           onPressed: () {
             NavigatorUtil.go(context, Routes.noSendConfirm);
-
           },
         ),
         backgroundColor: Colors.blue,
@@ -61,7 +75,7 @@ class _QRCodePageState extends State<QRCodePage> {
                           title: Text('不发货面单扫码'),
                           subtitle: Text("可用于标记各发货批次中现在“不发货”的订单"),
                           onTap: () {
-                            scan(type: ScanType.QR);
+                            scanNoSend(context);
                           }),
                     ],
                   ),
@@ -110,6 +124,27 @@ class _QRCodePageState extends State<QRCodePage> {
     );
   }
 
+  Future scanNoSend(BuildContext context) async {
+    ScanResultData data;
+    ScanConfigData config = ScanConfigData(
+        isSplashOn: true,
+        isContinuous: true,
+        isNeedButton: true,
+        buttonString: "扫码完毕",
+        tipString: "提示",
+        toastString: "扫码成功",
+        formatType: -1);
+    try {
+      print(config);
+      print(json.encode(config));
+      data = await ScanPlugin.startScan(config);
+    } on PlatformException {
+      print("Failed to get platform version.");
+    }
+    if (!mounted) return;
+    NavigatorUtil.goPramPage(context, Routes.noSendConfirm, data);
+  }
+
   Future scan({ScanType type = ScanType.QR}) async {
     ScanResultData data;
     ScanConfigData config = ScanConfigData(
@@ -119,7 +154,7 @@ class _QRCodePageState extends State<QRCodePage> {
         buttonString: "扫码完毕",
         tipString: "提示",
         toastString: "扫码成功",
-        formatType: 1);
+        formatType: getQrFormat(type));
     try {
       print(config);
       print(json.encode(config));
@@ -132,21 +167,28 @@ class _QRCodePageState extends State<QRCodePage> {
     setState(() {});
   }
 
-  List<BarcodeFormat> getQrFormat(ScanType type) {
-    List<BarcodeFormat> list = new List();
+  int getQrFormat(ScanType type) {
     switch (type) {
       case ScanType.QR:
-        list.add(BarcodeFormat.qr);
-        break;
+        return 1;
       case ScanType.OTHER:
-        list.addAll(BarcodeFormat.values);
-        list.remove(BarcodeFormat.qr);
-        break;
+        return -1;
       case ScanType.ALL:
-        list.addAll(BarcodeFormat.values);
-        break;
+        return 0;
     }
-    return list;
+    return 0;
+  }
+
+  @override
+  void callBack(ScanResultData data) {
+    handleData(data.data);
+  }
+
+  handleData(String number) async {
+    ResultData resultData =
+    await HttpManager.getInstance(type: UrlType.logistics).post(
+        "admin/print-task-item/get-base-order-by-express",
+        {"expressNo": number});
   }
 }
 
