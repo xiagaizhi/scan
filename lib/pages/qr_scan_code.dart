@@ -8,6 +8,7 @@ import 'package:scan/utils/NavigatorUtil.dart';
 import 'package:scan_plugin/data/scan_config_data.dart';
 import 'package:scan_plugin/data/scan_result_data.dart';
 import 'package:scan_plugin/scan_plugin.dart';
+import 'package:scan/pages/login.dart';
 
 class QRCodePage extends StatefulWidget {
   @override
@@ -25,7 +26,8 @@ class _QRCodePageState extends State<QRCodePage> {
         leading: IconButton(
           icon: new Icon(Icons.aspect_ratio),
           onPressed: () {
-            scan(type: ScanType.ALL);
+            NavigatorUtil.go(context, Routes.noSendConfirm);
+
           },
         ),
         backgroundColor: Colors.blue,
@@ -35,7 +37,9 @@ class _QRCodePageState extends State<QRCodePage> {
             icon: Icon(Icons.table_chart),
             tooltip: "Scan",
             onPressed: () {
-              NavigatorUtil.go(context, Routes.noSendConfirm);
+              Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+                return Login();
+              }));
             },
           )
         ],

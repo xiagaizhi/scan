@@ -1,8 +1,11 @@
 import 'dart:async';
 
 import 'package:barcode_scan/barcode_scan.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:scan/network/network_manager.dart';
+import 'package:scan/network/ienv.dart';
 
 /// 不发货面单结果
 
@@ -125,15 +128,15 @@ class _Login extends State<Login> {
     }
     return null;
   }
-  /// 获取手机验证码
-  getCode(){
 
+  /// 获取手机验证码
+  getCode() {
+    HttpManager.getInstance(type: UrlType.sso)
+        .post('/verify-code/get', {'param': null, 'type': 'SMS_VERIFY_CODE'});
   }
 
   /// 调用登陆接口
-  login(){
-
-  }
+  login() {}
 
   @override
   Widget build(BuildContext context) {
@@ -155,6 +158,7 @@ class _Login extends State<Login> {
         fit: BoxFit.cover,
       )),
     );
+
     /// logo名称
     Widget logoName = new Container(
         margin: EdgeInsets.only(top: 10),
@@ -162,12 +166,12 @@ class _Login extends State<Login> {
         child: Text(
           "阳光校园商家端",
           textAlign: TextAlign.center,
-          style:TextStyle(
-            fontSize:18.0, // 文字大小
-            color:Colors.grey, // 文字颜色
-              fontWeight: FontWeight.w700
-          ),
+          style: TextStyle(
+              fontSize: 18.0, // 文字大小
+              color: Colors.grey, // 文字颜色
+              fontWeight: FontWeight.w700),
         ));
+
     ///密码登陆  验证码登陆
     Widget bottomArea = new Container(
       margin: EdgeInsets.only(right: 70, left: 80),
@@ -190,6 +194,7 @@ class _Login extends State<Login> {
               });
             },
           ),
+
           ///垂直分割线
           SizedBox(
             width: 1,
@@ -219,7 +224,7 @@ class _Login extends State<Login> {
 
     ///输入文本框区域
     Widget inputTextArea = new Container(
-      margin: EdgeInsets.only(left: 20, right: 20),
+      margin: EdgeInsets.only(left: 50, right: 50),
       decoration: new BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(8)),
           color: Colors.white),
@@ -228,120 +233,245 @@ class _Login extends State<Login> {
         child: new Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            new TextFormField(
-              controller: _userNameController,
-              focusNode: _focusNodeUserName,
-              //设置键盘类型
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(
-                labelText: "用户名",
-                hintText: "请输入手机号",
-                prefixIcon: Icon(Icons.person),
-                //尾部添加清除按钮
-                suffixIcon: (_isShowClear)
-                    ? IconButton(
-                        icon: Icon(Icons.clear),
-                        onPressed: () {
-                          // 清空输入框内容
-                          _userNameController.clear();
-                        },
-                      )
-                    : null,
-              ),
-              //验证用户名
-              validator: validateUserName,
-              //保存数据
-              onSaved: (String value) {
-                _username = value;
-              },
-            ),
-            _isLoginWay
-                ? new TextFormField(
-                    focusNode: _focusNodePassWord,
-                    decoration: InputDecoration(
-                        labelText: "密码",
-                        hintText: "请输入密码",
-                        prefixIcon: Icon(Icons.lock),
-                        // 是否显示密码
-                        suffixIcon: IconButton(
-                          icon: Icon((_isShowPwd)
-                              ? Icons.visibility
-                              : Icons.visibility_off),
-                          // 点击改变显示或隐藏密码
+            new ConstrainedBox(
+              constraints: BoxConstraints(maxHeight: 60, maxWidth: 260),
+              child: new TextFormField(
+                controller: _userNameController,
+                focusNode: _focusNodeUserName,
+                //设置键盘类型
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  labelText: "用户名",
+                  hintText: "请输入手机号",
+                  //尾部添加清除按钮
+                  suffixIcon: (_isShowClear)
+                      ? IconButton(
+                          icon: Icon(Icons.clear),
                           onPressed: () {
-                            setState(() {
-                              _isShowPwd = !_isShowPwd;
-                            });
+                            // 清空输入框内容
+                            _userNameController.clear();
                           },
-                        )),
-                    obscureText: !_isShowPwd,
-                    //密码验证
-                    validator: validatePassWord,
-                    //保存数据
-                    onSaved: (String value) {
-                      _password = value;
-                    },
-                  )
-                : new TextFormField(
-                    focusNode: _focusNodeCode,
-                    keyboardType: TextInputType.number,
-                    decoration: InputDecoration(
-                        labelText: "验证码",
-                        hintText: "请输入验证码",
-                        prefixIcon: Icon(Icons.lock),
-                        suffixIcon: RaisedButton(
-                            child: Text(_isCode
-                                ? _codeText
-                                : "" + this._codeNumber.toString() + 's'),
+                        )
+                      : null,
+                ),
+                //验证用户名
+                validator: validateUserName,
+                //保存数据
+                onSaved: (String value) {
+                  _username = value;
+                },
+              ),
+            ),
+            new ConstrainedBox(
+              constraints: BoxConstraints(maxHeight: 60, maxWidth: 260),
+              child: _isLoginWay
+                  ? new TextFormField(
+                      focusNode: _focusNodePassWord,
+                      decoration: InputDecoration(
+                          labelText: "密码",
+                          hintText: "请输入密码",
+                          // 是否显示密码
+                          suffixIcon: IconButton(
+                            icon: Icon((_isShowPwd)
+                                ? Icons.visibility
+                                : Icons.visibility_off),
+                            // 点击改变显示或隐藏密码
                             onPressed: () {
                               setState(() {
-                                if (_isCode) {
-                                  this._showTimer();
-                                  _isCode = false;
-                                  getCode();
-                                }
+                                _isShowPwd = !_isShowPwd;
                               });
-                            })),
-                    obscureText: false,
-                    //保存数据
-                    onSaved: (String value) {
-                      _phoneCode = value;
-                    },
-                  )
+                            },
+                          )),
+                      obscureText: !_isShowPwd,
+                      //密码验证
+                      validator: validatePassWord,
+                      //保存数据
+                      onSaved: (String value) {
+                        _password = value;
+                      },
+                    )
+                  : new TextFormField(
+                      focusNode: _focusNodeCode,
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(
+                          labelText: "验证码",
+                          hintText: "请输入验证码",
+                          suffixIcon: RaisedButton(
+                              color: Colors.white,
+                              elevation: 0.0,
+                              child: Text(
+                                _isCode
+                                    ? _codeText
+                                    : "" + this._codeNumber.toString() + 's',
+                                style:
+                                    TextStyle(fontSize: 14, color: Colors.blue),
+                              ),
+                              onPressed: () {
+                                showCupertinoDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return Scaffold(
+                                          backgroundColor:
+                                              Color.fromRGBO(0, 0, 0, 0),
+                                          body: CupertinoAlertDialog(
+                                            title: Text(
+                                              '请输入图片验证码',
+                                              style: TextStyle(fontSize: 16),
+                                            ),
+                                            content: SizedBox(
+                                              width: 230.0,
+                                              height: 80.0,
+                                              child: Row(
+                                                children: <Widget>[
+                                                  Container(
+                                                    width: 115.0,
+                                                    height: 80.0,
+                                                    alignment: Alignment.bottomCenter,
+                                                    child: Column(
+                                                      children: <Widget>[
+                                                        new SizedBox(
+                                                          height: 20,
+                                                        ),
+                                                        Text('VRVT'),
+                                                        Text('换一换换一换')
+                                                      ],
+                                                    ),
+                                                  ),
+
+                                                  Container(
+                                                    width: 115.0,
+                                                    height: 80.0,
+                                                    alignment: Alignment.bottomCenter,
+                                                    child: new TextFormField(
+//                                                      maxLength: 4,
+                                                      decoration:InputDecoration(
+                                                        contentPadding: EdgeInsets.only(top: 0.0,left: 24.0,bottom: 0.0),
+                                                        hintText: "输入字符",
+                                                        enabledBorder:OutlineInputBorder(
+                                                          //未选中时候的颜色
+                                                          borderRadius:BorderRadius.circular(5.0),
+                                                          borderSide:BorderSide(color: Color(0xff9e51ff),
+                                                          ),
+                                                        ),
+                                                        focusedBorder:
+                                                            OutlineInputBorder(
+                                                          //选中时外边框颜色
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                      5.0),
+                                                          borderSide:
+                                                              BorderSide(
+                                                            color: Color(
+                                                                0xff9e51ff),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      onSaved:
+                                                          (String value) {},
+                                                    ),
+
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            actions: <Widget>[
+                                              CupertinoDialogAction(
+                                                child: Text('取消'),
+                                                onPressed: () {},
+                                              ),
+                                              CupertinoDialogAction(
+                                                child: Text('确认'),
+                                                onPressed: () {},
+                                              ),
+                                            ],
+                                          ));
+                                    });
+//                                setState(() {
+//                                  if (_isCode) {
+//                                    this._showTimer();
+//                                    _isCode = false;
+//                                    getCode();
+//                                  }
+//                                });
+                              })),
+                      obscureText: false,
+                      //保存数据
+                      onSaved: (String value) {
+                        _phoneCode = value;
+                      },
+                    ),
+            ),
           ],
         ),
       ),
     );
-
+//
+//    Widget dialogCode = new Container()
     /// 登录按钮区域
     Widget loginButtonArea = new Container(
-      margin: EdgeInsets.only(left: 20, right: 20),
-      height: 45.0,
-      child: new RaisedButton(
-        color: Colors.blue[300],
-        child: Text(
-          "登录",
-          style: Theme.of(context).primaryTextTheme.headline,
-        ),
-        // 设置按钮圆角
-        shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
-        onPressed: () {
-          //点击登录按钮，解除焦点，回收键盘
-          _focusNodePassWord.unfocus();
-          _focusNodeUserName.unfocus();
-          _focusNodeCode.unfocus();
+        margin: EdgeInsets.only(left: 20, right: 20),
+        height: 100.0,
+        child: Column(
+          children: <Widget>[
+            ButtonTheme(
+                minWidth: 260.0, //设置最小宽度
+                height: 44.0,
+                child: new RaisedButton(
+                  color: Colors.blue,
+                  textColor: Colors.white,
+                  child: Text(
+                    _isLoginWay ? "密码登陆" : "验证码登陆",
+//                    style: Theme.of(context).primaryTextTheme.headline,
+                    style: TextStyle(fontSize: 18),
+                  ),
+                  // 设置按钮圆角
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(5.0)),
+                  onPressed: () {
+                    //点击登录按钮，解除焦点，回收键盘
+                    _focusNodePassWord.unfocus();
+                    _focusNodeUserName.unfocus();
+                    _focusNodeCode.unfocus();
 
-          if (_formKey.currentState.validate()) {
-            //只有输入通过验证，才会执行这里
-            _formKey.currentState.save();
-            //todo 登录操作
-            print("$_username + $_password");
-            login();
-          }
-        },
-      ),
-    );
+                    if (_formKey.currentState.validate()) {
+                      //只有输入通过验证，才会执行这里
+                      _formKey.currentState.save();
+                      //todo 登录操作
+                      print("$_username + $_password");
+                      login();
+                    }
+                  },
+                )),
+            ButtonTheme(
+              minWidth: 260.0, //设置最小宽度
+              height: 44.0,
+              child: new RaisedButton(
+                color: Colors.white,
+                elevation: 0.0,
+                child: Text(
+                  _isLoginWay ? "切换验证码登陆" : "切换密码登陆",
+//                  style: Theme.of(context).primaryTextTheme.headline,
+                  style: TextStyle(fontSize: 18, color: Colors.grey),
+                ),
+                // 设置按钮圆角
+                shape: RoundedRectangleBorder(
+                    side: BorderSide(color: Colors.white),
+                    borderRadius: BorderRadius.circular(5.0)),
+                onPressed: () {
+                  //点击登录按钮，解除焦点，回收键盘
+                  _focusNodePassWord.unfocus();
+                  _focusNodeUserName.unfocus();
+                  _focusNodeCode.unfocus();
+
+                  setState(() {
+                    _isLoginWay = !_isLoginWay;
+                  });
+                },
+              ),
+            ),
+          ],
+        ));
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -361,16 +491,14 @@ class _Login extends State<Login> {
             ),
             logoImageArea,
             logoName,
+
+//            bottomArea,
             new SizedBox(
-              height: 10,
-            ),
-            bottomArea,
-            new SizedBox(
-              height: 10,
+              height: 20,
             ),
             inputTextArea,
             new SizedBox(
-              height: 40,
+              height: 30,
             ),
             loginButtonArea,
           ],
