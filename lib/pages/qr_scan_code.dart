@@ -58,7 +58,7 @@ class _QRCodePageState extends State<QRCodePage> with ICallBack {
       'signCode': user.signCode, //设备登录签名
     };
     ResultData data = await HttpManager.getInstance(type: UrlType.sso)
-        .post('/login/app/auto/v1', param);
+        .post('/login/app/auto/v2', param);
 
     if(data.status != 'OK'){
       ToastUtils.showToast_1(data.errorMsg.toString());
@@ -66,7 +66,7 @@ class _QRCodePageState extends State<QRCodePage> with ICallBack {
     }
     UserInfoEntity userbean = new UserInfoEntity();
     userbean.fromJson(data.data);
-    prefs.setString(ShareUtils.token, data.status);
+    prefs.setString(ShareUtils.token, userbean.token);
     prefs.setString(ShareUtils.userInfo, jsonEncode(data.data));
 
   }

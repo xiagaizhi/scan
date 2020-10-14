@@ -387,7 +387,7 @@ class _Login extends State<Login> {
     UserInfoEntity user = new UserInfoEntity();
     user.fromJson(data.data);
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString(ShareUtils.token, data.status);
+    prefs.setString(ShareUtils.token, user.token);
     prefs.setString(ShareUtils.userInfo, jsonEncode(data.data));
 
     //跳转并关闭当前页面

@@ -2,6 +2,8 @@ import 'package:dio/dio.dart';
 import 'package:scan/model/result_data.dart';
 import 'package:scan/network/response_interceptor.dart';
 import 'package:scan/platform/platform_log.dart';
+import 'package:scan/utils/ShareUtils.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'config.dart';
 import 'ienv.dart';
@@ -11,12 +13,13 @@ class HttpManager {
   static HttpManager _instance;
   Dio _dio;
 
-  HttpManager._internal() {
+  HttpManager._internal()  {
     if (null == _dio) {
       _dio = new Dio(new BaseOptions(
         baseUrl: Config.getBaseUrl(UrlType.normal),
         connectTimeout: 15000,
-        headers: {"hello": "ygxy"},
+        headers: {
+        },
       ));
       _dio.interceptors.add(new LogsInterceptor());
       _dio.interceptors.add(new ResponseInterceptor());
@@ -50,6 +53,7 @@ class HttpManager {
     return _instance;
   }
 
+
   get(url, params) async {
     Response response;
     try {
@@ -68,8 +72,16 @@ class HttpManager {
   Future<ResultData> post(url, params) async {
     Response response;
     try {
-      print("httpUrl:"+url );
+      print("httpUrl:"+url +"----");
       print("params:"+params.toString());
+
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String token = prefs.get(ShareUtils.token);
+      if(token!=null&&token!=''){
+        var map = Map();
+        map['Authorization'] = token;
+        _dio.options.headers.addAll(new Map<String,String>.from(map));
+      }
       response = await _dio.post(url, data: params);
 
     } on DioError catch (e) {
