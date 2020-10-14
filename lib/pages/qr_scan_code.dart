@@ -8,6 +8,7 @@ import 'package:scan/router/Routes.dart';
 import 'package:scan/utils/DeviceUtils.dart';
 import 'package:scan/utils/NavigatorUtil.dart';
 import 'package:scan/utils/ShareUtils.dart';
+import 'package:scan/utils/ToastUtils.dart';
 import 'package:scan_plugin/call_back.dart';
 import 'package:scan_plugin/data/scan_config_data.dart';
 import 'package:scan_plugin/data/scan_result_data.dart';
@@ -15,6 +16,7 @@ import 'package:scan_plugin/scan_plugin.dart';
 import 'package:scan/pages/login.dart';
 import 'package:scan/network/ienv.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:scan/model/user_info_entity.dart';
 
 class QRCodePage extends StatefulWidget {
   @override
@@ -28,15 +30,22 @@ class _QRCodePageState extends State<QRCodePage> with ICallBack {
   void initState() {
     super.initState();
     DeviceUtils.getDeviceInfo();
+    autoLogin();
     ScanPlugin.register(this);
   }
 
   ///自动登陆
   autoLogin() async {
-    SharedPreferences pref = await SharedPreferences.getInstance();
-    String user = pref.get(ShareUtils.userInfo);
+    //获取登陆信息
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String userStr = prefs.get(ShareUtils.userInfo);
+    if(userStr==null||userStr==''){
+      return;
+    }
+    UserInfoEntity user = new UserInfoEntity();
+    user.fromJson(jsonDecode(userStr));
+    print('userinfo:'+user.mobile);
 
-    
     var param = {
       'client': 'supplier-app',
       'deviceName': DeviceUtils.androidDeviceInfo.model, //设备名称
@@ -45,14 +54,21 @@ class _QRCodePageState extends State<QRCodePage> with ICallBack {
       'meid': DeviceUtils.androidDeviceInfo.androidId, //设备id
       'sysName': DeviceUtils.androidDeviceInfo.device, //系统名称
       'sysNo': DeviceUtils.androidDeviceInfo.androidId, //系统编号
-
-//      'mobile': this._userNameController.text, //手机号码
-//      'signCode': '', //设备登录签名
+      'mobile': user.mobile, //手机号码
+      'signCode': user.signCode, //设备登录签名
     };
     ResultData data = await HttpManager.getInstance(type: UrlType.sso)
         .post('/login/app/auto/v1', param);
 
-    print('data');
+    if(data.status != 'OK'){
+      ToastUtils.showToast_1(data.errorMsg.toString());
+      return;
+    }
+    UserInfoEntity userbean = new UserInfoEntity();
+    userbean.fromJson(data.data);
+    prefs.setString(ShareUtils.token, data.status);
+    prefs.setString(ShareUtils.userInfo, jsonEncode(data.data));
+
   }
 
   @override

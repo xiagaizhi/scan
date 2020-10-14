@@ -9,6 +9,7 @@ import 'package:scan/model/result_data.dart';
 import 'package:scan/model/result_data.dart';
 import 'package:scan/network/network_manager.dart';
 import 'package:scan/network/ienv.dart';
+import 'package:scan/pages/qr_scan_code.dart';
 import 'package:scan/utils/DeviceUtils.dart';
 import 'dart:convert';
 import 'dart:typed_data';
@@ -17,6 +18,7 @@ import 'package:scan/model/secret_entity.dart';
 import 'package:scan/utils/RSAUtils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:scan/utils/ShareUtils.dart';
+import 'package:scan/model/user_info_entity.dart';
 
 /// 不发货面单结果
 
@@ -373,14 +375,27 @@ class _Login extends State<Login> {
       'sysNo': DeviceUtils.androidDeviceInfo.androidId, //系统编号
       "vcKey": msgCode.key,
       "vcCode": _phoneCodeController.text,
-      'verifyCodeType': 'NUMBER_IMG_CAPTCHA'
+      'verifyCodeType': 'SMS_VERIFY_CODE_V2'
     };
     ResultData data = await HttpManager.getInstance(type: UrlType.sso)
         .post('/login/app/sms/v2', param);
 
+    if(data.status != 'OK'){
+      ToastUtils.showToast_1(data.errorMsg.toString());
+      return;
+    }
+    UserInfoEntity user = new UserInfoEntity();
+    user.fromJson(data.data);
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString(ShareUtils.token, data.status);
-    prefs.setString(ShareUtils.userInfo, data.toString());
+    prefs.setString(ShareUtils.userInfo, jsonEncode(data.data));
+
+    //跳转并关闭当前页面
+    Navigator.pushAndRemoveUntil(
+      context,
+      new MaterialPageRoute(builder: (context) => new QRCodePage()),
+          (route) => route == null,
+    );
 
 
   }

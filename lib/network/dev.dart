@@ -12,6 +12,7 @@ class Dev implements IEnv {
     UrlType.mall: "//mall.dev-ag.ygxy.com",
     UrlType.order: "//order.dev-ag.ygxy.com",
     UrlType.sso: "//sso.dev-ag.gzygxy.com",
+//    UrlType.sso: "//192.168.66.66",
     UrlType.iPass: '//ipass.dev-ag.gzygxy.com',
     UrlType.uc: "//uc.dev-ag.gzygxy.com",
     UrlType.wo: "//wo.dev-ag.gzygxy.com",
