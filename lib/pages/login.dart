@@ -9,6 +9,7 @@ import 'package:scan/model/result_data.dart';
 import 'package:scan/model/result_data.dart';
 import 'package:scan/network/network_manager.dart';
 import 'package:scan/network/ienv.dart';
+import 'package:scan/utils/DeviceUtils.dart';
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:scan/utils/ToastUtils.dart';
@@ -67,6 +68,8 @@ class _Login extends State<Login> {
   @override
   void initState() {
     // TODO: implement initState
+    DeviceUtils.getDeviceInfo();
+
     //设置焦点监听
     _focusNodeUserName.addListener(_focusNodeListener);
     _focusNodePassWord.addListener(_focusNodeListener);
@@ -307,7 +310,7 @@ class _Login extends State<Login> {
   //账号密码登陆
   loginPas() async {
     var param = {
-      'client': '',
+      'client': 'supplier-app',
       'deviceName': '',
       'deviceNo': '',
       'imei': '',
@@ -325,7 +328,7 @@ class _Login extends State<Login> {
   //验证码登陆
   loginCode() async {
     var param = {
-      'client': '',
+      'client': 'supplier-app',
       'deviceName': '',
       'deviceNo': '',
       'imei': '',
