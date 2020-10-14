@@ -10,7 +10,7 @@ class Dev implements IEnv {
     UrlType.extEdu: '//eduext.dev-ag.gzygxy.com',
     UrlType.meal: "//meal.dev-ag.gzygxy.com",
     UrlType.mall: "//mall.dev-ag.ygxy.com",
-    UrlType.order: "//order.dev-ag.ygxy.com",
+    UrlType.order: "//order.dev-ag.gzygxy.com",
     UrlType.sso: "//sso.dev-ag.gzygxy.com",
 //    UrlType.sso: "//192.168.66.66",
     UrlType.iPass: '//ipass.dev-ag.gzygxy.com',

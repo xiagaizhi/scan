@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:dio/adapter.dart';
 import 'package:dio/dio.dart';
 import 'package:scan/model/result_data.dart';
 import 'package:scan/network/response_interceptor.dart';
@@ -23,6 +26,11 @@ class HttpManager {
       ));
       _dio.interceptors.add(new LogsInterceptor());
       _dio.interceptors.add(new ResponseInterceptor());
+      (_dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate =
+          (client) {
+        client.badCertificateCallback =
+            (X509Certificate cert, String host, int port) => true;
+      };
     }
   }
 

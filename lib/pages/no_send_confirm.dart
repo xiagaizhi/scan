@@ -1,15 +1,11 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
+import 'package:scan/model/order_data.dart';
 import 'package:scan/model/result_data.dart';
 import 'package:scan/network/network_manager.dart';
-import 'package:scan/utils/ConvertUtil.dart';
-import 'package:scan_plugin/data/scan_result_data.dart';
+import 'package:scan/sql/order_table.dart';
+import 'package:scan/sql/sql_helper.dart';
 
 class NoSendConFirmPage extends StatefulWidget {
-  final String data;
-
-  const NoSendConFirmPage({Key key, this.data}) : super(key: key);
   @override
   State<StatefulWidget> createState() {
     return NoSendConfirmState();
@@ -21,43 +17,61 @@ class NoSendConfirmState extends State<NoSendConFirmPage> {
   List<ExpandStateBean> expandStateList;
   List<CompanyData> dataList = List();
 
-  void initCompanyData() {
-    for (int k = 0; k < 10; k++) {
-      CompanyData companyData = CompanyData();
-      companyData.name = "鸿星尔克";
-      List<BatchData> batchList = List();
-      for (int i = 0; i < 10; i++) {
+  void handleCompanyData(OrderData data) {
+    for (CompanyData company in dataList) {
+      if (company.id == data.supplierId) {
         BatchData batchData = BatchData();
-        batchData.batchNumber = "10086";
+        batchData.batchNumber = data.taskId;
         List<GoodsData> goodsList = List();
-        for (int j = 0; j < 10; j++) {
-          GoodsData goodsData = GoodsData();
-          goodsData.expressNumber = "10085";
-          goodsData.orderIdNumber = "10084";
-          goodsList.add(goodsData);
-        }
+        GoodsData goodsData = GoodsData();
+        goodsData.orderIdNumber = data.orderId;
+        goodsData.expressNumber = data.orderId;
+        goodsList.add(goodsData);
         batchData.goodsList = goodsList;
-        batchList.add(batchData);
-        companyData.batchList = batchList;
+        company.batchList.add(batchData);
+        return;
       }
-      dataList.add(companyData);
+    }
+    CompanyData companyData = CompanyData();
+    companyData.name = data.supplierName;
+    companyData.id = data.supplierId;
+    List<BatchData> batchList = List();
+    BatchData batchData = BatchData();
+    batchData.batchNumber = data.taskId;
+    List<GoodsData> goodsList = List();
+    GoodsData goodsData = GoodsData();
+    goodsData.orderIdNumber = data.orderId;
+    goodsData.expressNumber = data.orderId;
+    goodsList.add(goodsData);
+    batchData.goodsList = goodsList;
+    batchList.add(batchData);
+    companyData.batchList = batchList;
+    dataList.add(companyData);
+    setState(() {});
+  }
+
+  handleData() async {
+    OrderTable orderTable = OrderTable();
+    // SqlHelper.deleteAll(orderTable);
+    List<Map<String, dynamic>> list = await SqlHelper.queryAll(orderTable);
+    for (Map<String, dynamic> map in list) {
+      OrderData data = new OrderData();
+      data.toOrderData(map);
+      handleCompanyData(data);
+      print(data.toString());
     }
   }
 
   @override
   void initState() {
     super.initState();
-    ScanResultData data=ScanResultData();
-    print("-----------------");
-    print(ConvertUtil.decode(widget.data));
-    print(data.fromJson(ConvertUtil.decode(widget.data)));
+    handleData();
     list = new List();
     expandStateList = new List();
     for (int i = 0; i < 10; i++) {
       list.add(i);
       expandStateList.add(ExpandStateBean(i, false));
     }
-    initCompanyData();
   }
 
   test() async {
@@ -66,11 +80,11 @@ class NoSendConfirmState extends State<NoSendConFirmPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return SafeArea(child: Scaffold(
       body: CustomScrollView(
         slivers: _buildListView(),
       ),
-    );
+    ));
   }
 
   List<Widget> _buildListView() {
@@ -165,11 +179,11 @@ class CompanyData {
 }
 
 class BatchData {
-  String batchNumber;
+  int batchNumber;
   List<GoodsData> goodsList;
 }
 
 class GoodsData {
-  String expressNumber;
-  String orderIdNumber;
+  int expressNumber;
+  int orderIdNumber;
 }

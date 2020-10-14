@@ -2,10 +2,15 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:scan/model/express_data.dart';
+import 'package:scan/model/order_data.dart';
 import 'package:scan/model/result_data.dart';
 import 'package:scan/network/network_manager.dart';
 import 'package:scan/router/Routes.dart';
 import 'package:scan/utils/DeviceUtils.dart';
+import 'package:scan/sql/order_table.dart';
+import 'package:scan/sql/sql_helper.dart';
+import 'package:scan/utils/CommonUtil.dart';
 import 'package:scan/utils/NavigatorUtil.dart';
 import 'package:scan/utils/ShareUtils.dart';
 import 'package:scan/utils/ToastUtils.dart';
@@ -143,7 +148,7 @@ class _QRCodePageState extends State<QRCodePage> with ICallBack {
                           title: Text('单个面单发货扫码'),
                           subtitle: Text("可用于单个面单的订单信息查询及发货操作"),
                           onTap: () {
-                            scan(type: ScanType.OTHER);
+                            scanSingleSend(context);
                           }),
                     ],
                   ),
@@ -192,7 +197,28 @@ class _QRCodePageState extends State<QRCodePage> with ICallBack {
       print("Failed to get platform version.");
     }
     if (!mounted) return;
-    NavigatorUtil.goPramPage(context, Routes.noSendConfirm, data);
+    NavigatorUtil.go(context, Routes.noSendConfirm);
+  }
+
+  Future scanSingleSend(BuildContext context) async {
+    ScanResultData data;
+    ScanConfigData config = ScanConfigData(
+        isSplashOn: true,
+        isContinuous: false,
+        isNeedButton: false,
+        buttonString: "扫码完毕",
+        tipString: "提示",
+        toastString: "扫码成功",
+        formatType: -1);
+    try {
+      print(config);
+      print(json.encode(config));
+      data = await ScanPlugin.startScan(config);
+    } on PlatformException {
+      print("Failed to get platform version.");
+    }
+    if (!mounted) return;
+    NavigatorUtil.goPramPage(context, Routes.sendGoods, data);
   }
 
   Future scan({ScanType type = ScanType.QR}) async {
@@ -235,10 +261,31 @@ class _QRCodePageState extends State<QRCodePage> with ICallBack {
   }
 
   handleData(String number) async {
-    ResultData resultData =
-    await HttpManager.getInstance(type: UrlType.logistics).post(
-        "admin/print-task-item/get-base-order-by-express",
-        {"expressNo": number});
+    // ResultData resultData =
+    //     await HttpManager.getInstance(type: UrlType.logistics).post(
+    //         "/admin/print-task-item/get-base-order-by-express",
+    //         {"expressNo": number});
+    OrderData orderData = OrderData();
+    var id = CommonUtil.randomBit(1);
+    orderData.fromJson({
+      "consignmentNumber": "${CommonUtil.randomBit(4)}",
+      "createTime": "2020-10-13T10:18:35.298Z",
+      "expressStatus": "NONE",
+      "id": CommonUtil.randomBit(20),
+      "needDeliver": true,
+      "orderFlag": {},
+      "orderId": CommonUtil.randomBit(4),
+      "orderNumber": "${CommonUtil.randomBit(10)}",
+      "status": "NOT_PRINT",
+      "supplierId": id,
+      "supplierName": "供应商名字:$id",
+      "taskId": CommonUtil.randomBit(10),
+      "taskItemId": CommonUtil.randomBit(4)
+    });
+    OrderTable orderTable = OrderTable();
+    SqlHelper.insert(orderTable, orderData.toStringMap());
+    print("ssssssssssssssssssssssssssssss");
+    print(await SqlHelper.queryAll(orderTable));
   }
 }
 

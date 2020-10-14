@@ -1,6 +1,7 @@
 import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
 import 'package:scan/pages/no_send_confirm.dart';
+import 'package:scan/pages/send_goods.dart';
 
 class RouteHandlers {
   static Handler normalHandler(Object page) {
@@ -10,12 +11,12 @@ class RouteHandlers {
     });
   }
 
-  static var noSendHandler = new Handler(
+  static var sendGoodsHandler = new Handler(
       handlerFunc: (BuildContext context, Map<String, dynamic> params) {
     String data = params["data"]?.first;
 
     /// 下面转换为真实想要的类型
-    return NoSendConFirmPage(
+    return SendGoodsPage(
       data: data,
     );
   });

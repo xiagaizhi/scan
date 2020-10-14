@@ -37,7 +37,6 @@ dependencies:
   #loading https://pub.dev/packages/flutter_spinkit
   flutter_spinkit: ^4.1.2
   #toast https://pub.dev/packages/fluttertoast
-  #  fluttertoast: ^7.0.4
   #picker选择器 https://pub.dev/packages/flutter_picker
   flutter_picker:
     git: git://github.com/yangyxd/flutter_picker.git

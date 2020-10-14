@@ -6,4 +6,9 @@ class ResultData with JsonConvert<ResultData> {
 	dynamic errorMsg;
 	dynamic data;
 	String status;
+
+	@override
+  String toString() {
+    return 'ResultData{errorCode: $errorCode, errorMsg: $errorMsg, data: $data, status: $status}';
+  }
 }
