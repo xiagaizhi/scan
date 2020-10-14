@@ -3,7 +3,10 @@ import 'package:device_info/device_info.dart';
 
 
 class DeviceUtils {
-
+  ///android 设备信息
+  static AndroidDeviceInfo androidDeviceInfo;
+  ///ios 设备信息
+  static IosDeviceInfo iosDeviceInfo;
 
   static getDevices(){
     if(Platform.isIOS){
@@ -16,9 +19,9 @@ class DeviceUtils {
   static void getDeviceInfo() async{
     DeviceInfoPlugin deviceInfo = new DeviceInfoPlugin();
     if(Platform.isIOS){
-      IosDeviceInfo iosDeviceInfo = await deviceInfo.iosInfo;
+      iosDeviceInfo = await deviceInfo.iosInfo;
     }else if(Platform.isAndroid){
-      AndroidDeviceInfo androidDeviceInfo = await deviceInfo.androidInfo;
+      androidDeviceInfo = await deviceInfo.androidInfo;
       print("devices:"+androidDeviceInfo.toString());
     }
   }

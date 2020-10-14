@@ -274,7 +274,7 @@ class _Login extends State<Login> {
           });
     });
 
-    print(imgCode.value);
+
   }
 
   /// 获取手机验证码
