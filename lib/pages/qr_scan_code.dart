@@ -29,6 +29,9 @@ class _QRCodePageState extends State<QRCodePage> with ICallBack {
   @override
   void initState() {
     super.initState();
+
+
+
     DeviceUtils.getDeviceInfo();
     autoLogin();
     ScanPlugin.register(this);
@@ -40,6 +43,9 @@ class _QRCodePageState extends State<QRCodePage> with ICallBack {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String userStr = prefs.get(ShareUtils.userInfo);
     if(userStr==null||userStr==''){
+      Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+        return Login();
+      }));
       return;
     }
     UserInfoEntity user = new UserInfoEntity();

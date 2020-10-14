@@ -77,9 +77,18 @@ class _Login extends State<Login> {
     });
   }
 
+  //清空登陆信息
+  clean() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.remove(ShareUtils.token); //删除指定键
+    prefs.remove(ShareUtils.userInfo); //删除指定键
+    prefs.clear();//清空键值对
+  }
+
   @override
   void initState() {
     // TODO: implement initState
+    clean();
     getSecretKey();
 
     //设置焦点监听
@@ -344,6 +353,7 @@ class _Login extends State<Login> {
   loginPas() async {
     String encode = await RSAUtils.encodeString(
         this._passwordController.text, mSecret.publicKey);
+
     print("encode:$encode");
     var param = {
       'client': 'supplier-app', //登陆客户端
