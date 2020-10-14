@@ -50,7 +50,7 @@ class _QRCodePageState extends State<QRCodePage> with ICallBack {
       'client': 'supplier-app',
       'deviceName': DeviceUtils.androidDeviceInfo.model, //设备名称
       'deviceNo': DeviceUtils.androidDeviceInfo.androidId, //设备编号
-      'imei': ['1235648595262546'], //
+      'imei': [DeviceUtils.androidDeviceInfo.androidId], //
       'meid': DeviceUtils.androidDeviceInfo.androidId, //设备id
       'sysName': DeviceUtils.androidDeviceInfo.device, //系统名称
       'sysNo': DeviceUtils.androidDeviceInfo.androidId, //系统编号
