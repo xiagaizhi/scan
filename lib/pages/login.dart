@@ -13,6 +13,10 @@ import 'package:scan/utils/DeviceUtils.dart';
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:scan/utils/ToastUtils.dart';
+import 'package:scan/model/secret_entity.dart';
+import 'package:scan/utils/RSAUtils.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:scan/utils/ShareUtils.dart';
 
 /// 不发货面单结果
 
@@ -32,6 +36,12 @@ class _Login extends State<Login> {
 
   //用户名输入框控制器，此控制器可以监听用户名输入框操作
   TextEditingController _imgCodealue = new TextEditingController();
+
+  //用户名输入框控制器，此控制器可以监听用户名输入框操作
+  TextEditingController _passwordController = new TextEditingController();
+
+  //用户名输入框控制器，此控制器可以监听用户名输入框操作
+  TextEditingController _phoneCodeController = new TextEditingController();
 
 //表单状态
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -68,7 +78,7 @@ class _Login extends State<Login> {
   @override
   void initState() {
     // TODO: implement initState
-    DeviceUtils.getDeviceInfo();
+    getSecretKey();
 
     //设置焦点监听
     _focusNodeUserName.addListener(_focusNodeListener);
@@ -97,6 +107,9 @@ class _Login extends State<Login> {
     _focusNodePassWord.removeListener(_focusNodeListener);
     _focusNodeCode.removeListener(_focusNodeListener);
     _userNameController.dispose();
+    _imgCodealue.dispose();
+    _passwordController.dispose();
+    _phoneCodeController.dispose();
     super.dispose();
   }
 
@@ -147,6 +160,9 @@ class _Login extends State<Login> {
 
   //短信验证码
   CodeBeanData msgCode;
+
+  //获取到的key
+  SecretEntity mSecret;
 
   /// 获取图形验证码
   getImgCode() async {
@@ -273,8 +289,6 @@ class _Login extends State<Login> {
                 ));
           });
     });
-
-
   }
 
   /// 获取手机验证码
@@ -298,6 +312,23 @@ class _Login extends State<Login> {
     msgCode.fromJson(data.data);
   }
 
+  /// 获取秘钥
+  getSecretKey() async {
+    ResultData data = await HttpManager.getInstance(type: UrlType.sso)
+        .post('/secret-key/get', {});
+    print(data.status);
+    if (data.status != 'OK') {
+      ToastUtils.showToast_1(data.errorMsg.toString());
+      return;
+    }
+    mSecret = new SecretEntity();
+    mSecret.fromJson(data.data);
+
+    print("");
+  }
+
+
+
   /// 调用登陆接口 --
   login() async {
     if (_isLoginWay) {
@@ -309,41 +340,49 @@ class _Login extends State<Login> {
 
   //账号密码登陆
   loginPas() async {
+    String encode = await RSAUtils.encodeString(
+        this._passwordController.text, mSecret.publicKey);
+    print("encode:$encode");
     var param = {
-      'client': 'supplier-app',
-      'deviceName': '',
-      'deviceNo': '',
-      'imei': '',
-      'keyId': '',
-      'meid': '',
-      'mobile': '',
-      'password': '',
-      'sysName': '',
-      'sysNo': '',
+      'client': 'supplier-app', //登陆客户端
+      'deviceName': DeviceUtils.androidDeviceInfo.model, //设备名称
+      'deviceNo': DeviceUtils.androidDeviceInfo.androidId, //设备编号
+      'imei': ['1235648595262546'], //
+      'keyId': mSecret.keyId,
+      'meid': DeviceUtils.androidDeviceInfo.androidId, //设备id
+      'mobile': this._userNameController.text, //手机号码
+      'password': encode,
+      'sysName': DeviceUtils.androidDeviceInfo.device, //系统名称
+      'sysNo': DeviceUtils.androidDeviceInfo.androidId, //系统编号
     };
     ResultData data = await HttpManager.getInstance(type: UrlType.sso)
         .post('/login/app/password/v2', param);
+    print("data" + data.status);
   }
 
   //验证码登陆
   loginCode() async {
     var param = {
       'client': 'supplier-app',
-      'deviceName': '',
-      'deviceNo': '',
-      'imei': '',
-      'keyId': '',
-      'meid': '',
-      'mobile': '',
-      'password': '',
-      'sysName': '',
-      'sysNo': '',
-      'vcCode':'',
-      'vcKey':'',
-      'verifyCodeType':'NUMBER_IMG_CAPTCHA'
+      'deviceName': DeviceUtils.androidDeviceInfo.model, //设备名称
+      'deviceNo': DeviceUtils.androidDeviceInfo.androidId, //设备编号
+      'imei': [DeviceUtils.androidDeviceInfo.androidId], //
+      'meid': DeviceUtils.androidDeviceInfo.androidId, //设备id
+      'mobile': this._userNameController.text, //手机号码
+      'sysName': DeviceUtils.androidDeviceInfo.device, //系统名称
+      'sysNo': DeviceUtils.androidDeviceInfo.androidId, //系统编号
+      "vcKey": msgCode.key,
+      "vcCode": _phoneCodeController.text,
+      'verifyCodeType': 'NUMBER_IMG_CAPTCHA'
     };
     ResultData data = await HttpManager.getInstance(type: UrlType.sso)
         .post('/login/app/sms/v2', param);
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString(ShareUtils.token, data.status);
+    prefs.setString(ShareUtils.userInfo, data.toString());
+
+
   }
 
   @override
@@ -475,6 +514,7 @@ class _Login extends State<Login> {
               constraints: BoxConstraints(maxHeight: 60, maxWidth: 260),
               child: _isLoginWay
                   ? new TextFormField(
+                      controller: _passwordController,
                       focusNode: _focusNodePassWord,
                       decoration: InputDecoration(
                           labelText: "密码",
@@ -500,6 +540,7 @@ class _Login extends State<Login> {
                       },
                     )
                   : new TextFormField(
+                      controller: _phoneCodeController,
                       focusNode: _focusNodeCode,
                       keyboardType: TextInputType.number,
                       decoration: InputDecoration(
@@ -521,7 +562,12 @@ class _Login extends State<Login> {
                                   ToastUtils.showToast_1("请先输入手机号码");
                                   return;
                                 }
-                                getImgCode();
+                                if(this._codeText=='重新发送验证码'){
+                                  getCode();
+                                }else{
+                                  getImgCode();
+                                }
+
                               })),
                       obscureText: false,
                       //保存数据

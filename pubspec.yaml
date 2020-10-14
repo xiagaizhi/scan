@@ -52,7 +52,9 @@ dependencies:
   rxdart: ^0.24.1
   barcode_scan: ^3.0.1
   fluttertoast: ^3.1.3 #toast
-  device_info : ^0.2.0 #获取设备信息
+  device_info: ^0.4.0+1 #获取设备信息
+  flutter_cipher: ^0.0.3 #rsa 加密
+  encrypt: ^4.0.0
   scan_plugin:
     git: http://192.168.66.253:9010/android/scan_plugin.git
 dev_dependencies:
@@ -64,8 +66,7 @@ dev_dependencies:
 
 # The following section is specific to Flutter.
 flutter:
-
-  # The following line ensures that the Material Icons font is
-  # included with your application, so that you can use the icons in
-  # the material Icons class.
   uses-material-design: true
+  assets:
+    - assets/file/rsa_public_key.pem
+    - assets/file/rsa_private_key.pem

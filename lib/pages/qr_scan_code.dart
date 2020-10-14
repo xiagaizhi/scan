@@ -5,13 +5,16 @@ import 'package:flutter/services.dart';
 import 'package:scan/model/result_data.dart';
 import 'package:scan/network/network_manager.dart';
 import 'package:scan/router/Routes.dart';
+import 'package:scan/utils/DeviceUtils.dart';
 import 'package:scan/utils/NavigatorUtil.dart';
+import 'package:scan/utils/ShareUtils.dart';
 import 'package:scan_plugin/call_back.dart';
 import 'package:scan_plugin/data/scan_config_data.dart';
 import 'package:scan_plugin/data/scan_result_data.dart';
 import 'package:scan_plugin/scan_plugin.dart';
 import 'package:scan/pages/login.dart';
 import 'package:scan/network/ienv.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class QRCodePage extends StatefulWidget {
   @override
@@ -24,7 +27,32 @@ class _QRCodePageState extends State<QRCodePage> with ICallBack {
   @override
   void initState() {
     super.initState();
+    DeviceUtils.getDeviceInfo();
     ScanPlugin.register(this);
+  }
+
+  ///自动登陆
+  autoLogin() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    String user = pref.get(ShareUtils.userInfo);
+
+    
+    var param = {
+      'client': 'supplier-app',
+      'deviceName': DeviceUtils.androidDeviceInfo.model, //设备名称
+      'deviceNo': DeviceUtils.androidDeviceInfo.androidId, //设备编号
+      'imei': ['1235648595262546'], //
+      'meid': DeviceUtils.androidDeviceInfo.androidId, //设备id
+      'sysName': DeviceUtils.androidDeviceInfo.device, //系统名称
+      'sysNo': DeviceUtils.androidDeviceInfo.androidId, //系统编号
+
+//      'mobile': this._userNameController.text, //手机号码
+//      'signCode': '', //设备登录签名
+    };
+    ResultData data = await HttpManager.getInstance(type: UrlType.sso)
+        .post('/login/app/auto/v1', param);
+
+    print('data');
   }
 
   @override
