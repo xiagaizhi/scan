@@ -5,7 +5,7 @@ class OrderTable extends BaseTable {
   ///表名
   final String name = 'OrderTable';
 
-  final String consignmentNumber = "consignmentNumber";
+  final String expressNo = "expressNo";
   final String createTime = "createTime";
   final String expressStatus = "expressStatus";
   final String id = "id";
@@ -18,16 +18,18 @@ class OrderTable extends BaseTable {
   final String supplierName = "supplierName";
   final String taskId = "taskId";
   final String taskItemId = "taskItemId";
+  final String columnId = "columnId";
 
   @override
   createTableString() {
     return '''
         create table $name (
-        $id integer primary key,
-        $consignmentNumber text ,
+        $columnId integer primary key AUTOINCREMENT,
+        $id integer,
+        $expressNo text ,
         $createTime text ,
         $expressStatus text ,
-        $needDeliver text,
+        $needDeliver integer,
         $orderFlag text ,
         $orderId text ,
         $orderNumber text ,

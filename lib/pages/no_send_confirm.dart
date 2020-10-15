@@ -1,9 +1,17 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:scan/model/order_data.dart';
 import 'package:scan/model/result_data.dart';
+import 'package:scan/network/ienv.dart';
 import 'package:scan/network/network_manager.dart';
 import 'package:scan/sql/order_table.dart';
 import 'package:scan/sql/sql_helper.dart';
+import 'package:scan/utils/NetWorkUtil.dart';
+import 'package:scan/utils/PageUtil.dart';
+import 'package:scan_plugin/call_back.dart';
+import 'package:scan_plugin/data/scan_result_data.dart';
+import 'package:scan_plugin/scan_plugin.dart';
 
 class NoSendConFirmPage extends StatefulWidget {
   @override
@@ -12,23 +20,36 @@ class NoSendConFirmPage extends StatefulWidget {
   }
 }
 
-class NoSendConfirmState extends State<NoSendConFirmPage> {
-  List<int> list;
-  List<ExpandStateBean> expandStateList;
+class NoSendConfirmState extends State<NoSendConFirmPage> with ICallBack {
   List<CompanyData> dataList = List();
+  List<OrderData> orderDataList = List();
 
   void handleCompanyData(OrderData data) {
     for (CompanyData company in dataList) {
       if (company.id == data.supplierId) {
+        for (BatchData batchData in company.batchList) {
+          if (batchData.batchNumber == data.taskId) {
+            GoodsData goodsData =
+                GoodsData(data.taskItemId, data.taskItemId, data.needDeliver);
+            batchData.goodsList.add(goodsData);
+            setState(() {});
+            return;
+          }
+        }
         BatchData batchData = BatchData();
         batchData.batchNumber = data.taskId;
         List<GoodsData> goodsList = List();
-        GoodsData goodsData = GoodsData();
-        goodsData.orderIdNumber = data.orderId;
-        goodsData.expressNumber = data.orderId;
+        GoodsData goodsData =
+            GoodsData(data.taskItemId, data.taskItemId, data.needDeliver);
         goodsList.add(goodsData);
         batchData.goodsList = goodsList;
         company.batchList.add(batchData);
+        setState(() {
+          print("setState----------------------------");
+          print(data);
+          print(goodsData);
+          print(dataList[0]);
+        });
         return;
       }
     }
@@ -39,15 +60,17 @@ class NoSendConfirmState extends State<NoSendConFirmPage> {
     BatchData batchData = BatchData();
     batchData.batchNumber = data.taskId;
     List<GoodsData> goodsList = List();
-    GoodsData goodsData = GoodsData();
-    goodsData.orderIdNumber = data.orderId;
-    goodsData.expressNumber = data.orderId;
+    GoodsData goodsData =
+        GoodsData(data.taskItemId, data.taskItemId, data.needDeliver);
     goodsList.add(goodsData);
     batchData.goodsList = goodsList;
     batchList.add(batchData);
     companyData.batchList = batchList;
     dataList.add(companyData);
-    setState(() {});
+    setState(() {
+      print("first  setState----------------------------");
+      print(dataList[0]);
+    });
   }
 
   handleData() async {
@@ -55,10 +78,12 @@ class NoSendConfirmState extends State<NoSendConFirmPage> {
     // SqlHelper.deleteAll(orderTable);
     List<Map<String, dynamic>> list = await SqlHelper.queryAll(orderTable);
     for (Map<String, dynamic> map in list) {
+      print(map);
       OrderData data = new OrderData();
-      data.toOrderData(map);
+      orderDataList.add(data);
+      data.fromJson(map);
+      print(data);
       handleCompanyData(data);
-      print(data.toString());
     }
   }
 
@@ -66,23 +91,64 @@ class NoSendConfirmState extends State<NoSendConFirmPage> {
   void initState() {
     super.initState();
     handleData();
-    list = new List();
-    expandStateList = new List();
-    for (int i = 0; i < 10; i++) {
-      list.add(i);
-      expandStateList.add(ExpandStateBean(i, false));
-    }
+    ScanPlugin.register(this);
   }
 
-  test() async {
-    ResultData resultData = await HttpManager.getInstance().post(null, null);
+  @override
+  void dispose() {
+    super.dispose();
+    ScanPlugin.remove(this);
   }
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(child: Scaffold(
-      body: CustomScrollView(
-        slivers: _buildListView(),
+    return SafeArea(
+        child: Scaffold(
+      body: Column(
+        children: <Widget>[
+          Flexible(
+              fit: FlexFit.tight,
+              child: CustomScrollView(
+                slivers: _buildListView(),
+              )),
+          Container(
+            height: 64,
+            width: double.infinity,
+            color: Colors.blue,
+            child: Row(
+              children: <Widget>[
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: GestureDetector(
+                    child: Container(
+                      padding: EdgeInsets.only(left: 30),
+                      child: Text("继续扫码"),
+                    ),
+                    onTap: () {
+                      _onReStartScanClick();
+                    },
+                  ),
+                ),
+                Flexible(
+                  child: SizedBox(),
+                  fit: FlexFit.tight,
+                ),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: GestureDetector(
+                    child: Container(
+                      padding: EdgeInsets.only(right: 30),
+                      child: Text("确认提交"),
+                    ),
+                    onTap: () {
+                      _onConfirmClick();
+                    },
+                  ),
+                ),
+              ],
+            ),
+          )
+        ],
       ),
     ));
   }
@@ -95,6 +161,7 @@ class NoSendConfirmState extends State<NoSendConFirmPage> {
         delegate:
             new SliverChildBuilderDelegate((BuildContext context, int index) {
           //创建列表项
+          print(companyData.batchList[index].goodsList[0].needDeliver);
           return Column(
             children: <Widget>[
               Offstage(
@@ -102,7 +169,7 @@ class NoSendConfirmState extends State<NoSendConFirmPage> {
                 child: Row(
                   children: <Widget>[
                     Icon(Icons.card_giftcard),
-                    Text(companyData.name),
+                    Text("${companyData.name}"),
                     Container(
                       padding: EdgeInsets.only(left: 18),
                       child: Text("${companyData.batchList.length}条"),
@@ -112,7 +179,7 @@ class NoSendConfirmState extends State<NoSendConFirmPage> {
               ),
               ExpansionTile(
                 title: Container(
-                  color: Colors.blue,
+                  padding: EdgeInsets.only(left: 10),
                   child: Row(
                     children: <Widget>[
                       Text("批次号：${companyData.batchList[index].batchNumber}"),
@@ -125,18 +192,45 @@ class NoSendConfirmState extends State<NoSendConFirmPage> {
                   ),
                 ),
                 children: companyData.batchList[index].goodsList
-                    .map((item) => Row(
-                          children: <Widget>[
-                            Column(
+                    .map((item) => Offstage(
+                          offstage: item.needDeliver == 0,
+                          child: Container(
+                            padding: EdgeInsets.only(left: 15, right: 5),
+                            height: 70,
+                            child: Row(
                               children: <Widget>[
-                                Text("快递单号:${item.expressNumber}"),
-                                Text("订单号:${item.orderIdNumber}"),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    Container(
+                                      alignment: Alignment.center,
+                                      child: Text("快递单号:${item.expressNumber}"),
+                                    ),
+                                    Padding(
+                                        padding:
+                                            EdgeInsets.only(top: 7, bottom: 7)),
+                                    Container(
+                                      alignment: Alignment.center,
+                                      child: Text("订单号:${item.taskItemId}"),
+                                    ),
+                                  ],
+                                ),
+                                Flexible(
+                                  child: SizedBox(),
+                                  fit: FlexFit.tight,
+                                ),
+                                Align(
+                                    alignment: Alignment.centerRight,
+                                    child: GestureDetector(
+                                      child: Text("删除"),
+                                      onTap: () {
+                                        _onDeleteClick(item);
+                                      },
+                                    ))
                               ],
                             ),
-                            Container(
-                              child: Text("删除"),
-                            )
-                          ],
+                          ),
                         ))
                     .toList(),
               )
@@ -150,14 +244,42 @@ class NoSendConfirmState extends State<NoSendConFirmPage> {
     return slivers;
   }
 
-  _setCurrentIndex(int index, isExpand) {
+  _onDeleteClick(GoodsData goodsData) async {
+    print(goodsData);
     setState(() {
-      expandStateList.forEach((item) {
-        if (item.index == index) {
-          item.isOpen = !isExpand;
-        }
-      });
+      goodsData.needDeliver = 0;
     });
+    OrderTable orderTable = OrderTable();
+    var lisy = await SqlHelper.query(orderTable, goodsData.taskItemId);
+    print(lisy);
+    await SqlHelper.update(orderTable, {
+      "taskItemId": goodsData.taskItemId,
+      "needDeliver": goodsData.needDeliver
+    });
+    print(goodsData.needDeliver == 0);
+    print(await SqlHelper.query(orderTable, goodsData.taskItemId));
+  }
+
+  _onReStartScanClick() {
+    print("继续扫码");
+  }
+
+  _onConfirmClick() async {
+    print("确认提交");
+    OrderTable orderTable = OrderTable();
+    List<Map<String, dynamic>> list = await SqlHelper.queryAll(orderTable);
+    ResultData resultData = await NetWorkUtil.updateOrderSendStatus(list);
+    if (resultData.isSuccess()) {
+      SqlHelper.deleteAll(orderTable);
+      setState(() {
+        dataList = List();
+      });
+    }
+  }
+
+  @override
+  void callBack(ScanResultData data) {
+    PageUtil.handleScanEvent(data.data);
   }
 }
 
@@ -169,9 +291,14 @@ class ExpandStateBean {
 }
 
 class CompanyData {
-  String name;
-  int id;
+  dynamic name;
+  dynamic id;
   List<BatchData> batchList;
+
+  @override
+  String toString() {
+    return 'CompanyData{name: $name, id: $id, batchList: $batchList}';
+  }
 
   CompanyData.name(this.name, this.id, this.batchList);
 
@@ -179,11 +306,24 @@ class CompanyData {
 }
 
 class BatchData {
-  int batchNumber;
+  dynamic batchNumber;
   List<GoodsData> goodsList;
+
+  @override
+  String toString() {
+    return 'BatchData{batchNumber: $batchNumber, goodsList: $goodsList}';
+  }
 }
 
 class GoodsData {
-  int expressNumber;
-  int orderIdNumber;
+  dynamic expressNumber;
+  dynamic taskItemId;
+  dynamic needDeliver;
+
+  GoodsData(this.expressNumber, this.taskItemId, this.needDeliver);
+
+  @override
+  String toString() {
+    return 'GoodsData{expressNumber: $expressNumber, taskItemId: $taskItemId, needDeliver: $needDeliver}';
+  }
 }

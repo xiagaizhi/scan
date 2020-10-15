@@ -27,7 +27,7 @@ class Dev implements IEnv {
     UrlType.schoolApp: '//school.dev-ag.gzygxy.com/',
     UrlType.h5App: '../../',
     UrlType.http: 'http:',
-    UrlType.logistics: "//logistics.dev-ag.gzygxy.com"
+    UrlType.logistics: "//logistics.dev-ag.gzygxy.com/"
   };
 
   @override

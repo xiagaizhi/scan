@@ -11,6 +11,7 @@ import 'package:scan/sql/order_table.dart';
 import 'package:scan/sql/sql_helper.dart';
 import 'package:scan/utils/CommonUtil.dart';
 import 'package:scan/utils/NavigatorUtil.dart';
+import 'package:scan/utils/PageUtil.dart';
 import 'package:scan/utils/ShareUtils.dart';
 import 'package:scan/utils/ToastUtils.dart';
 import 'package:scan_plugin/call_back.dart';
@@ -34,8 +35,6 @@ class _QRCodePageState extends State<QRCodePage> with ICallBack {
   void initState() {
     super.initState();
 
-
-
     DeviceUtils.getDeviceInfo();
     autoLogin();
     ScanPlugin.register(this);
@@ -46,7 +45,7 @@ class _QRCodePageState extends State<QRCodePage> with ICallBack {
     //获取登陆信息
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String userStr = prefs.get(ShareUtils.userInfo);
-    if(userStr==null||userStr==''){
+    if (userStr == null || userStr == '') {
       Navigator.of(context).push(MaterialPageRoute(builder: (context) {
         return Login();
       }));
@@ -54,7 +53,7 @@ class _QRCodePageState extends State<QRCodePage> with ICallBack {
     }
     UserInfoEntity user = new UserInfoEntity();
     user.fromJson(jsonDecode(userStr));
-    print('userinfo:'+user.mobile);
+    print('userinfo:' + user.mobile);
 
     var param = {
       'client': 'supplier-app',
@@ -70,7 +69,7 @@ class _QRCodePageState extends State<QRCodePage> with ICallBack {
     ResultData data = await HttpManager.getInstance(type: UrlType.sso)
         .post('/login/app/auto/v2', param);
 
-    if(data.status != 'OK'){
+    if (data.status != 'OK') {
       ToastUtils.showToast_1(data.errorMsg.toString());
       return;
     }
@@ -78,7 +77,6 @@ class _QRCodePageState extends State<QRCodePage> with ICallBack {
     userbean.fromJson(data.data);
     prefs.setString(ShareUtils.token, userbean.token);
     prefs.setString(ShareUtils.userInfo, jsonEncode(data.data));
-
   }
 
   @override
@@ -262,38 +260,7 @@ class _QRCodePageState extends State<QRCodePage> with ICallBack {
 
   @override
   void callBack(ScanResultData data) {
-    handleData(data.data);
-  }
-
-  handleData(String number) async {
-    ResultData resultData =
-        await HttpManager.getInstance(type: UrlType.logistics).post(
-            "/admin/print-task-item/get-base-order-by-express",
-            {"expressNo": number});
-    OrderData orderData = OrderData();
-    var id = CommonUtil.randomBit(1);
-    // orderData.fromJson({
-    //   "consignmentNumber": "${CommonUtil.randomBit(4)}",
-    //   "createTime": "2020-10-13T10:18:35.298Z",
-    //   "expressStatus": "NONE",
-    //   "id": CommonUtil.randomBit(20),
-    //   "needDeliver": true,
-    //   "orderFlag": {},
-    //   "orderId": CommonUtil.randomBit(4),
-    //   "orderNumber": "${CommonUtil.randomBit(10)}",
-    //   "status": "NOT_PRINT",
-    //   "supplierId": id,
-    //   "supplierName": "供应商名字:$id",
-    //   "taskId": CommonUtil.randomBit(10),
-    //   "taskItemId": CommonUtil.randomBit(4)
-    // });
-    for(Map<String, dynamic> map in resultData.data){
-      orderData.fromJson(resultData.data);
-    }
-    OrderTable orderTable = OrderTable();
-    SqlHelper.insert(orderTable, orderData.toStringMap());
-    print("ssssssssssssssssssssssssssssss");
-    print(await SqlHelper.queryAll(orderTable));
+    PageUtil.handleScanEvent(data.data);
   }
 }
 
