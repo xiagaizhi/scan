@@ -261,27 +261,30 @@ class _QRCodePageState extends State<QRCodePage> with ICallBack {
   }
 
   handleData(String number) async {
-    // ResultData resultData =
-    //     await HttpManager.getInstance(type: UrlType.logistics).post(
-    //         "/admin/print-task-item/get-base-order-by-express",
-    //         {"expressNo": number});
+    ResultData resultData =
+        await HttpManager.getInstance(type: UrlType.logistics).post(
+            "/admin/print-task-item/get-base-order-by-express",
+            {"expressNo": number});
     OrderData orderData = OrderData();
     var id = CommonUtil.randomBit(1);
-    orderData.fromJson({
-      "consignmentNumber": "${CommonUtil.randomBit(4)}",
-      "createTime": "2020-10-13T10:18:35.298Z",
-      "expressStatus": "NONE",
-      "id": CommonUtil.randomBit(20),
-      "needDeliver": true,
-      "orderFlag": {},
-      "orderId": CommonUtil.randomBit(4),
-      "orderNumber": "${CommonUtil.randomBit(10)}",
-      "status": "NOT_PRINT",
-      "supplierId": id,
-      "supplierName": "供应商名字:$id",
-      "taskId": CommonUtil.randomBit(10),
-      "taskItemId": CommonUtil.randomBit(4)
-    });
+    // orderData.fromJson({
+    //   "consignmentNumber": "${CommonUtil.randomBit(4)}",
+    //   "createTime": "2020-10-13T10:18:35.298Z",
+    //   "expressStatus": "NONE",
+    //   "id": CommonUtil.randomBit(20),
+    //   "needDeliver": true,
+    //   "orderFlag": {},
+    //   "orderId": CommonUtil.randomBit(4),
+    //   "orderNumber": "${CommonUtil.randomBit(10)}",
+    //   "status": "NOT_PRINT",
+    //   "supplierId": id,
+    //   "supplierName": "供应商名字:$id",
+    //   "taskId": CommonUtil.randomBit(10),
+    //   "taskItemId": CommonUtil.randomBit(4)
+    // });
+    for(Map<String, dynamic> map in resultData.data){
+      orderData.fromJson(resultData.data);
+    }
     OrderTable orderTable = OrderTable();
     SqlHelper.insert(orderTable, orderData.toStringMap());
     print("ssssssssssssssssssssssssssssss");

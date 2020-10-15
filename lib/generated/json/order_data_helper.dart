@@ -18,7 +18,7 @@ orderDataFromJson(OrderData data, Map<String, dynamic> json) {
 		data.needDeliver = json['needDeliver']?.toString();
 	}
 	if (json['orderFlag'] != null) {
-		data.orderFlag = new OrderOrderFlag().fromJson(json['orderFlag']);
+		data.orderFlag = new OrderOrderFlag().fromJson(new Map<String, dynamic>.from(json['orderFlag']));
 	}
 	if (json['orderId'] != null) {
 		data.orderId = json['orderId']?.toInt();
