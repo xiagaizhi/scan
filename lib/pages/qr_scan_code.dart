@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:scan/model/express_data.dart';
 import 'package:scan/model/order_data.dart';
 import 'package:scan/model/result_data.dart';
 import 'package:scan/network/network_manager.dart';
@@ -106,9 +105,15 @@ class _QRCodePageState extends State<QRCodePage> with ICallBack {
             icon: Icon(Icons.table_chart),
             tooltip: "Scan",
             onPressed: () {
-              Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-                return Login();
-              }));
+//              Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+//                return Login();
+//              }));
+              //跳转并关闭当前页面
+              Navigator.pushAndRemoveUntil(
+                context,
+                new MaterialPageRoute(builder: (context) => new Login()),
+                    (route) => route == null,
+              );
             },
           )
         ],

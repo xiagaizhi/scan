@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:scan/model/express_data.dart';
+import 'package:scan/model/express_data_entity.dart';
 import 'package:scan/model/order_detail_data.dart';
 import 'package:scan/model/result_data.dart';
 import 'package:scan/network/ienv.dart';
 import 'package:scan/network/network_manager.dart';
 import 'package:scan/utils/ConvertUtil.dart';
 import 'package:scan_plugin/data/scan_result_data.dart';
+import 'package:scan/utils/ToastUtils.dart';
+import 'package:scan/pages/qr_scan_code.dart';
 
 class SendGoodsPage extends StatefulWidget {
   final String data;
@@ -25,161 +27,9 @@ class SendGoodsState extends State<SendGoodsPage> {
   @override
   void initState() {
     super.initState();
-    mOrderDetailData.fromJson({
-      "id": "1315551182285971458",
-      "extId": "",
-      "number": "2010121513330015140001",
-      "type": "NORMAL",
-      "paymentType": "NOT_NEED_PAY",
-      "bizSourceId": 1,
-      "createTime": "2020-10-12 15:13:33",
-      "creatorId": "58123",
-      "creatorName": "张w",
-      "creatorMobile": "17685284881",
-      "status": "CONFIRM",
-      "cancelStatus": "NONE",
-      "tradeId": "0",
-      "tradeNumber": "",
-      "tradeTime": "2020-10-12 15:13:33",
-      "deliverTime": "2020-10-13 16:49:37",
-      "consigneeTime": "2020-10-13 17:49:37",
-      "supplierId": "1314381716223168514",
-      "supplierName": "1009线下供应商",
-      "sourceMoney": "8800",
-      "money": "0",
-      "sourceFreight": "0",
-      "freight": "0",
-      "logisticsType": "SELF_PICK",
-      "selfPointId": "1314386786977366017",
-      "selfPointName": "大坡路",
-      "consignee": "zzz",
-      "consigneeMobile": "17688888888",
-      "consigneeAreaId": 520112,
-      "consigneeProvinceName": "贵州省",
-      "consigneeCityName": "贵阳市",
-      "consigneeAreaName": "乌当区",
-      "consigneeAddress": "新天社区服务中心新添大道北段32号",
-      "consignmentType": "NONE",
-      "consignmentCompanyId": 0,
-      "consignmentCompanyName": null,
-      "consignmentNumber": "",
-      "consignmentRemark": "",
-      "creatorRemark": null,
-      "sellerRemark": null,
-      "items": [
-        {
-          "orderItemId": "1315551182294360066",
-          "orderId": "1315551182285971458",
-          "goodsId": "1314410256452866049",
-          "goodsName": "吃吃喝喝",
-          "goodsCover": "1314409138775777282",
-          "goodsType": "REALLY",
-          "goodsSkuId": "1314410256624832526",
-          "goodsProperties": [
-            {
-              "propertyId": "1314410256620638210",
-              "propertyValueId": "1314410256620638222",
-              "propertyValue": "155",
-              "propertyName": "身高(CM)"
-            },
-            {
-              "propertyId": "1314410256620638230",
-              "propertyValueId": "1314410256620638231",
-              "propertyValue": "男款",
-              "propertyName": "款式"
-            }
-          ],
-          "sourcePrice": "8800",
-          "price": "0",
-          "lastPrice": "0",
-          "num": 1,
-          "salesReturnType": "NOT_SUPPORT",
-          "goodsCategoryId": "2",
-          "goodsCategoryName": "其他",
-          "relationSchoolId": "1314382013452521473",
-          "relationSchoolName": "1009线下学校",
-          "relationClassesId": "1314384590424510466",
-          "relationClassesNum": 1,
-          "relationGrade": "ONE",
-          "relationStudentId": "1314388325724852225",
-          "relationStudentName": "MM",
-          "orderSalesReturnId": null,
-          "orderSalesReturnNumber": null,
-          "orderSalesReturnType": null,
-          "orderSalesReturnStatus": null,
-          "supportSalesReturn": false
-        }
-      ],
-      "orderLogs": [
-        {
-          "orderId": "1315551182285971458",
-          "orderStatus": "WAIT_PAY",
-          "canalStatus": "NONE",
-          "createTime": "2020-10-12 15:13:33",
-          "creatorId": "58123",
-          "creatorName": "张w"
-        },
-        {
-          "orderId": "1315551182285971458",
-          "orderStatus": "WAIT_EXPRESS",
-          "canalStatus": "NONE",
-          "createTime": "2020-10-12 15:13:33",
-          "creatorId": "58123",
-          "creatorName": "张w"
-        },
-        {
-          "orderId": "1315551182285971458",
-          "orderStatus": "WAIT_CONFIRM",
-          "canalStatus": "NONE",
-          "createTime": "2020-10-13 16:49:37",
-          "creatorId": "332015",
-          "creatorName": "-"
-        },
-        {
-          "orderId": "1315551182285971458",
-          "orderStatus": "CONFIRM",
-          "canalStatus": "NONE",
-          "createTime": "2020-10-13 17:49:37",
-          "creatorId": "0",
-          "creatorName": "系统"
-        }
-      ],
-      "logs": [
-        {
-          "status": "PLACE_ORDER",
-          "statusDesc": "已下单",
-          "createTime": "2020-10-12 15:13:33",
-          "creatorId": "58123",
-          "creatorName": "张w"
-        },
-        {
-          "status": "WAIT_EXPRESS",
-          "statusDesc": "待发货",
-          "createTime": "2020-10-12 15:13:33",
-          "creatorId": "58123",
-          "creatorName": "张w"
-        },
-        {
-          "status": "DELIVER_GOODS",
-          "statusDesc": "已发货",
-          "createTime": "2020-10-13 16:49:37",
-          "creatorId": "332015",
-          "creatorName": "-"
-        },
-        {
-          "status": "CONFIRM",
-          "statusDesc": "已收货",
-          "createTime": "2020-10-13 17:49:37",
-          "creatorId": "0",
-          "creatorName": "系统"
-        }
-      ],
-      "orderSalesReturn": null
-    });
-    print(mOrderDetailData.toString());
-    print(mOrderDetailData.consigneeAddress);
     data.fromJson(ConvertUtil.decode(widget.data));
-//     getExpressInfo(data.data);
+    getExpressInfo(data.data);
+
   }
 
   @override
@@ -190,11 +40,52 @@ class SendGoodsState extends State<SendGoodsPage> {
           centerTitle: true,
         ),
         body: SingleChildScrollView(
-          padding: EdgeInsets.only(left:16.0,top: 8.0,right: 16.0,bottom: 8.0),
+          padding: EdgeInsets.only(left:16.0,top: 8.0,right: 16.0,bottom: 12.0),
           child: Column(
-            children: [_buildCompany(), _buildAddress(), _buildList()],
+            children: <Widget>[
+              new SizedBox(height: 10, ),
+              _buildCompany(),
+              new SizedBox(height: 10, ),
+              Divider(height: 1),
+              new SizedBox(height: 10, ),
+              _buildAddress(),
+              _buildList(),
+
+            ],
           ),
-        ));
+        ),
+    bottomNavigationBar: BottomNavigationBar(
+      items: [
+        BottomNavigationBarItem(
+            icon: Icon(
+              Icons.aspect_ratio,
+            ),
+            title: Text('重新扫码',style: TextStyle(
+            ),
+            )
+        ),
+        BottomNavigationBarItem(
+            icon: Icon(
+              Icons.assignment_turned_in,
+                color: Colors.blueAccent
+            ),
+            backgroundColor: Colors.blue,
+            title: Text('确认收货',style: TextStyle(
+              color: Colors.blueAccent
+            ),
+            )
+        ),
+      ],
+      onTap: (int i){
+        print('i');
+        if(i==0){
+
+        }else{
+          sendDevices();
+        }
+      },
+    )
+    );
   }
 
   Widget _buildCompany() {
@@ -203,18 +94,25 @@ class SendGoodsState extends State<SendGoodsPage> {
         Icon(Icons.local_gas_station),
         Column(
           children: [
-            Row(
-              children: [Text("快递公司："), Text("某某公司")],
+            Container(
+              width: 300,
+              padding: EdgeInsets.only(left: 10),
+              alignment: Alignment.centerLeft,
+              child: Text("快递公司：${mExpressData==null?'-':mExpressData.consignmentCompanyName}"),
             ),
-            Row(
-              children: [Text("快递单号"), Text("快递单号")],
-            )
+            Container(
+              width: 300,
+              padding: EdgeInsets.only(left: 10),
+              alignment: Alignment.centerLeft,
+              child: Text("快递号：${mExpressData==null?'-':mExpressData.expressNo}"),
+            ),
           ],
         )
       ],
     );
     return widget;
   }
+
 
   Widget _buildAddress() {
     Widget widget = Row(
@@ -222,19 +120,20 @@ class SendGoodsState extends State<SendGoodsPage> {
         Icon(Icons.local_gas_station),
         Column(
           children: [
-            Row(
-              children: [
-                Text("${mOrderDetailData.creatorName}"),
-                Text("${mOrderDetailData.creatorMobile}")
-              ],
+            Container(
+              width: 300,
+              padding: EdgeInsets.only(left: 10),
+              alignment: Alignment.centerLeft,
+              child: Text("${_isStr(mOrderDetailData.creatorName)}"+"${_isStr(mOrderDetailData.creatorMobile)}"),
             ),
-            Row(
-              children: [
-                Text("${mOrderDetailData.consigneeProvinceName}" +
-                    "${mOrderDetailData.consigneeCityName}" +
-                    "${mOrderDetailData.consigneeAreaName}" +
-                    "${mOrderDetailData.consigneeAddress}")
-              ],
+            Container(
+              width: 300,
+              padding: EdgeInsets.only(left: 10),
+              alignment: Alignment.centerLeft,
+              child: Text("${_isStr(mOrderDetailData.consigneeProvinceName)}" +
+                  "${_isStr(mOrderDetailData.consigneeCityName)}" +
+                  "${_isStr(mOrderDetailData.consigneeAreaName)}" +
+                  "${_isStr(mOrderDetailData.consigneeAddress)}"),
             ),
           ],
         )
@@ -243,17 +142,68 @@ class SendGoodsState extends State<SendGoodsPage> {
     return widget;
   }
 
+  //规格字符串 合并
+  String _getProper(int index){
+    var proStr = '';
+    if(mOrderDetailData==null||mOrderDetailData.items==null){
+      return '';
+    }
+    mOrderDetailData.items[0].goodsProperties.forEach((v){
+      if(mOrderDetailData.items[0].goodsProperties.length == 1){
+        proStr =proStr+ v.propertyName+':'+v.propertyValue;
+      }else{
+        proStr =proStr+ v.propertyName+':'+v.propertyValue+'; ';
+      }
+    });
+    return proStr;
+  }
+
+  String _isStr(String str){
+    if(str==null){
+      return '';
+    }else{
+      return str;
+    }
+  }
+  //处理单价
+  String _getPrice(String money){
+    String price='';
+    if(money==null){
+      price = '';
+    }else{
+      price =  '￥'+(int.parse(money)/100).toString();
+    }
+    return price;
+  }
+  // 获取总价
+  String _getTotalMoney(String money,String freight){
+    String totalMoney = '';
+    if(money==null||freight==null){
+      totalMoney = '';
+    }else{
+      totalMoney = '￥'+ ((int.parse(money)*int.parse(freight))/100).toString();
+    }
+
+    return totalMoney;
+  }
+
+
   Widget _buildList() {
     Widget widget = Container(
       child: Column(
         children: <Widget>[
-          ListTile(
-            title: Text("订单号:${mOrderDetailData.items[0].orderId}"),
+          new SizedBox(height: 30, ),
+          Container(
+              width: 360,
+              alignment: Alignment.centerLeft,
+              child: Text(
+                  "订单号:${_isStr(mOrderDetailData.number)}"
+              )
           ),
           Container(
               child: ListView.builder(
 //                  itemCount: mOrderDetailData.items.length,
-                  itemCount: 100,
+                  itemCount: 20,
                   shrinkWrap: true,
                   physics: new NeverScrollableScrollPhysics(),
                   itemBuilder: (context, index) {
@@ -267,10 +217,9 @@ class SendGoodsState extends State<SendGoodsPage> {
                               height: 20,
                               alignment: Alignment.centerLeft,
                               child: Text(
-                                  'klsakjjshjfahfakhfakhfhkfskhahfjhfjhfjhfsjhfsjhfjhfjhfsjfajhfjafjfjjhfjhfjhfjhfjhfjhfjhfjhfsasjk',
+                               "${mOrderDetailData.items==null?'-':_isStr(mOrderDetailData.items[0].goodsName)}",
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
-                                  color: Colors.black54,
                                   fontSize: 16
                                 ),
 
@@ -280,7 +229,7 @@ class SendGoodsState extends State<SendGoodsPage> {
                               width: 50.0,
                               height: 20,
                               alignment: Alignment.centerRight,
-                              child:Text(mOrderDetailData.items[0].sourcePrice),
+                              child:Text("${mOrderDetailData.items==null?'-':_getPrice(mOrderDetailData.items[0].sourcePrice)}"),
                             ),
                           ],
                         ),
@@ -291,15 +240,20 @@ class SendGoodsState extends State<SendGoodsPage> {
                               width: 260.0,
                               alignment: Alignment.centerLeft,
                               child: Text(
-                                  mOrderDetailData.items[0].goodsName,
-                                  maxLines:2),
+                                  "${_getProper(0)}",
+                                  maxLines:2,
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.grey
+                                ),
+                              ),
                             ),
                             Container(
                               width: 50.0,
                               height: 20,
                               alignment: Alignment.centerRight,
                               child:
-                              Text(4.toString()),
+                              Text("x${mOrderDetailData.items==null?'-':_isStr(mOrderDetailData.items[0].num.toString())}"),
                             ),
                           ],
                         ),
@@ -310,7 +264,11 @@ class SendGoodsState extends State<SendGoodsPage> {
                               width: 260.0,
                               height: 20,
                               alignment: Alignment.centerLeft,
-                              child: Text('学生：'+mOrderDetailData.items[0].relationStudentName),
+                              child: Text("学生:${mOrderDetailData.items==null?'-':_isStr(mOrderDetailData.items[0].relationStudentName)}",
+                                style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.grey
+                                ),),
                             ),
                             Container(
                               width: 50.0,
@@ -325,50 +283,101 @@ class SendGoodsState extends State<SendGoodsPage> {
                       ],
                     );
                   })),
+
+          new SizedBox(height: 10, ),
+          //商品总计
+          Container(
+              width: 360,
+              alignment: Alignment.centerLeft,
+              child: Column(
+                children: <Widget>[
+                  Row(
+                    children: <Widget>[
+                      Container(
+                        width: 260.0,
+                        height: 20,
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          '商品总价',
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                              fontSize: 16
+                          ),
+                        ),
+                      ),
+                      Container(
+                        width: 50.0,
+                        height: 20,
+                        alignment: Alignment.centerRight,
+                        child:Text("${_getTotalMoney(mOrderDetailData.sourceMoney,mOrderDetailData.freight)}"),
+                      ),
+                    ],
+                  ),
+                  new SizedBox(height: 2, ),
+                  Row(
+                    children: <Widget>[
+                      Container(
+                        width: 260.0,
+                        height: 20,
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          '运费',
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                              fontSize: 16
+                          ),
+                        ),
+                      ),
+                      Container(
+                        width: 50.0,
+                        height: 20,
+                        alignment: Alignment.centerRight,
+                        child:Text("${_getPrice(mOrderDetailData.freight)}"),
+                      ),
+                    ],
+                  ),
+                  new SizedBox(height: 2, ),
+                  Row(
+                    children: <Widget>[
+                      Container(
+                        width: 260.0,
+                        height: 20,
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          '订单总价',
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                              fontSize: 16
+                          ),
+                        ),
+                      ),
+                      Container(
+                        width: 50.0,
+                        height: 20,
+                        alignment: Alignment.centerRight,
+                        child:Text("${_getPrice(mOrderDetailData.sourceMoney)}"),
+                      ),
+                    ],
+                  ),
+                  new SizedBox(height: 2, ),
+                ],
+              )
+          ),
+
         ],
       ),
     );
-
-//    Column(children: <Widget>[
-//      ListTile(title: Text("订单号:${mOrderDetailData.items[0].orderId}")),
-//      Container(
-//        child: ListView.builder(
-//            itemCount: mOrderDetailData.items.length,
-//            itemBuilder: (BuildContext context, int index) {
-//              return Column(
-//                children: [
-//                  Stack(
-//                    alignment: Alignment.center,
-//                    children: [
-//                      Container(
-//                        child: Text("Hello world",
-//                            style: TextStyle(color: Colors.white)),
-//                        color: Colors.red,
-//                      ),
-//                      Positioned(
-//                        left: 18.0,
-//                        child: Text("I am Jack"),
-//                      ),
-//                      Positioned(
-//                        right: 18.0,
-//                        child: Text("Your friend"),
-//                      )
-//                    ],
-//                  )
-//                ],
-//              );
-//            }),
-//      ),
-//
-//    ]);
     return widget;
   }
+
+  //快递公司信息
+  ExpressData mExpressData;
 
   getExpressInfo(String number) async {
     ResultData resultData =
         await HttpManager.getInstance(type: UrlType.logistics)
             .post("/admin/eorder-using/get-eorder-base-info", {
-      "expressNo": number,
+      "expressNo": '252314540522',
       "expressStatus": ['0'],
       "status": ['1', '3']
     });
@@ -380,14 +389,53 @@ class SendGoodsState extends State<SendGoodsPage> {
     }
     if (list.length > 0) {
       getOrderDetail(list[0].orderId);
+      mExpressData = list[0];
     }
   }
+
 
   getOrderDetail(String orderId) async {
     ResultData resultData = await HttpManager.getInstance(type: UrlType.order)
         .post("/admin/order/detail", {"orderId": orderId});
-    OrderDetailData data = OrderDetailData();
-    data.fromJson(resultData.data);
-    print(data);
+    setState(() {
+      mOrderDetailData = OrderDetailData();
+      mOrderDetailData.fromJson(resultData.data);
+      print(mOrderDetailData);
+    });
+
+  }
+
+  //确认发货
+  sendDevices() async {
+    var extData = {
+        'consignmentCompanyId':mExpressData.consignmentCompanyId,
+      'consignmentNumber':mExpressData.expressNo,
+      'consignmentRemark':mOrderDetailData.consignmentRemark,
+      'consignmentType':'EXPRESS',
+      'logisticsType':mOrderDetailData.logisticsType,
+      'supplierId':mOrderDetailData.supplierId
+    };
+    var data = {
+      'orderId': mOrderDetailData.id,
+      'status':'WAIT_CONFIRM',
+      'extData':extData
+    };
+    ResultData resultData = await HttpManager.getInstance(type: UrlType.order)
+        .post("/admin/order/deliver-goods", data);
+
+    print('ssssss');
+
+    if(resultData.status != 'OK'){
+      ToastUtils.showToast_1(resultData.errorMsg.toString());
+      return;
+    }
+    ToastUtils.showToast_1('发货成功');
+    //跳转并关闭当前页面
+    Navigator.pushAndRemoveUntil(
+      context,
+      new MaterialPageRoute(builder: (context) => new QRCodePage()),
+          (route) => route == null,
+    );
+
   }
 }
