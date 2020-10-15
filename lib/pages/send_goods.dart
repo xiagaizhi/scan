@@ -124,7 +124,7 @@ class SendGoodsState extends State<SendGoodsPage> {
               width: 300,
               padding: EdgeInsets.only(left: 10),
               alignment: Alignment.centerLeft,
-              child: Text("${_isStr(mOrderDetailData.creatorName)}"+"${_isStr(mOrderDetailData.creatorMobile)}"),
+              child: Text("${_isStr(mOrderDetailData.creatorName)}"+':'+"${_isStr(mOrderDetailData.creatorMobile)}"),
             ),
             Container(
               width: 300,
@@ -148,8 +148,8 @@ class SendGoodsState extends State<SendGoodsPage> {
     if(mOrderDetailData==null||mOrderDetailData.items==null){
       return '';
     }
-    mOrderDetailData.items[0].goodsProperties.forEach((v){
-      if(mOrderDetailData.items[0].goodsProperties.length == 1){
+    mOrderDetailData.items[index].goodsProperties.forEach((v){
+      if(mOrderDetailData.items[index].goodsProperties.length == 1){
         proStr =proStr+ v.propertyName+':'+v.propertyValue;
       }else{
         proStr =proStr+ v.propertyName+':'+v.propertyValue+'; ';
@@ -202,8 +202,8 @@ class SendGoodsState extends State<SendGoodsPage> {
           ),
           Container(
               child: ListView.builder(
-//                  itemCount: mOrderDetailData.items.length,
-                  itemCount: 20,
+                  itemCount: mOrderDetailData.items==null?0:mOrderDetailData.items.length,
+//                  itemCount: 20,
                   shrinkWrap: true,
                   physics: new NeverScrollableScrollPhysics(),
                   itemBuilder: (context, index) {
@@ -217,7 +217,7 @@ class SendGoodsState extends State<SendGoodsPage> {
                               height: 20,
                               alignment: Alignment.centerLeft,
                               child: Text(
-                               "${mOrderDetailData.items==null?'-':_isStr(mOrderDetailData.items[0].goodsName)}",
+                               "${mOrderDetailData.items==null?'-':_isStr(mOrderDetailData.items[index].goodsName)}",
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
                                   fontSize: 16
@@ -229,7 +229,7 @@ class SendGoodsState extends State<SendGoodsPage> {
                               width: 50.0,
                               height: 20,
                               alignment: Alignment.centerRight,
-                              child:Text("${mOrderDetailData.items==null?'-':_getPrice(mOrderDetailData.items[0].sourcePrice)}"),
+                              child:Text("${mOrderDetailData.items==null?'-':_getPrice(mOrderDetailData.items[index].sourcePrice)}"),
                             ),
                           ],
                         ),
@@ -253,7 +253,7 @@ class SendGoodsState extends State<SendGoodsPage> {
                               height: 20,
                               alignment: Alignment.centerRight,
                               child:
-                              Text("x${mOrderDetailData.items==null?'-':_isStr(mOrderDetailData.items[0].num.toString())}"),
+                              Text("x${mOrderDetailData.items==null?'-':_isStr(mOrderDetailData.items[index].num.toString())}"),
                             ),
                           ],
                         ),
@@ -264,7 +264,7 @@ class SendGoodsState extends State<SendGoodsPage> {
                               width: 260.0,
                               height: 20,
                               alignment: Alignment.centerLeft,
-                              child: Text("学生:${mOrderDetailData.items==null?'-':_isStr(mOrderDetailData.items[0].relationStudentName)}",
+                              child: Text("学生:${mOrderDetailData.items==null?'-':_isStr(mOrderDetailData.items[index].relationStudentName)}",
                                 style: TextStyle(
                                     fontSize: 12,
                                     color: Colors.grey
