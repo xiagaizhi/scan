@@ -352,7 +352,7 @@ class _Login extends State<Login> {
 
   //账号密码登陆
   loginPas() async {
-    String encode = await RSAUtils.encodeString(
+    String encode = await RSAUtils.encodeString1(
         this._passwordController.text, mSecret.publicKey);
 
     print("加密字符串---:$encode");
