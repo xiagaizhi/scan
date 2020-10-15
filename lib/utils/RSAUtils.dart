@@ -9,15 +9,16 @@ class RSAUtils {
 
   static Future<String> encodeString(String content,String publicKeyStr) async{
 //    var publicKeyStr = await rootBundle.loadString('assets/file/rsa_public_key.pem');
-    String pKyy = publicKeyStr;
+    String pKyy = 'MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDYYHJ+crv5rq9V6+ECFMdyT8AaOHqdBZ3jZV6tZhwKC2hFr9oELYUcwlHyCoaB4q19tBtIAPFA4qqzg4n3RVw/TWmbE+SJIdyHVKLsmpGdv6hPh65oZ+91t7JABBShtIpkvDrIGkOOVXnLj71WMp277iqJZWRceKcO1APXqBfSwwIDAQAB';
+//    String pKyy = publicKeyStr;
     publicKeyStr = "-----BEGIN PUBLIC KEY-----\r\n" + pKyy + '\r\n-----END PUBLIC KEY-----';
     var publicKey = RSAKeyParser().parse(publicKeyStr);
     final encrypter = Encrypter(RSA(publicKey: publicKey));
     return await encrypter.encrypt(content).base64.toUpperCase();
   }
 
-
   static Future<String> encodeString1(String content,String publicKeyStr) async{
+//    String pKyy = 'MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDYYHJ+crv5rq9V6+ECFMdyT8AaOHqdBZ3jZV6tZhwKC2hFr9oELYUcwlHyCoaB4q19tBtIAPFA4qqzg4n3RVw/TWmbE+SJIdyHVKLsmpGdv6hPh65oZ+91t7JABBShtIpkvDrIGkOOVXnLj71WMp277iqJZWRceKcO1APXqBfSwwIDAQAB';
     String pKyy = publicKeyStr;
     publicKeyStr = "-----BEGIN PUBLIC KEY-----\r\n" + pKyy + '\r\n-----END PUBLIC KEY-----';
     var publicKey = RSAKeyParser().parse(publicKeyStr);
@@ -41,9 +42,6 @@ class RSAUtils {
     return base64.encode(totalBytes);
 //       return await encrypter.encrypt(content).base64.toUpperCase();
   }
-
-
-
 
   static Future<String> decodeString(String content) async{
     var publicKeyStr = await rootBundle.loadString('assets/file/rsa_private_key.pem');
