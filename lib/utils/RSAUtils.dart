@@ -40,7 +40,6 @@ class RSAUtils {
       totalBytes.addAll(encrypter.encryptBytes(item).bytes);
     }
     return base64.encode(totalBytes);
-//       return await encrypter.encrypt(content).base64.toUpperCase();
   }
 
   static Future<String> decodeString(String content) async{

@@ -88,7 +88,7 @@ class _Login extends State<Login> {
   @override
   void initState() {
     // TODO: implement initState
-    clean();
+//    clean();
     getSecretKey();
 
     //设置焦点监听
@@ -371,6 +371,22 @@ class _Login extends State<Login> {
     ResultData data = await HttpManager.getInstance(type: UrlType.sso)
         .post('/login/app/password/v2', param);
     print("data" + data.status);
+    if(data.status != 'OK'){
+      ToastUtils.showToast_1(data.errorMsg.toString());
+      return;
+    }
+    UserInfoEntity user = new UserInfoEntity();
+    user.fromJson(data.data);
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString(ShareUtils.token, user.token);
+    prefs.setString(ShareUtils.userInfo, jsonEncode(data.data));
+
+    //跳转并关闭当前页面
+    Navigator.pushAndRemoveUntil(
+      context,
+      new MaterialPageRoute(builder: (context) => new QRCodePage()),
+          (route) => route == null,
+    );
   }
 
   //验证码登陆
@@ -407,8 +423,6 @@ class _Login extends State<Login> {
       new MaterialPageRoute(builder: (context) => new QRCodePage()),
           (route) => route == null,
     );
-
-
   }
 
   @override
