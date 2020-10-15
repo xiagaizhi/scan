@@ -57,10 +57,10 @@ class _Login extends State<Login> {
   var _isCode = true; //判断是否显示倒计时
   var _codeText = "获取验证码";
   int _codeNumber = 10;
-
+  Timer t;
   //倒计时
   _showTimer() {
-    Timer t;
+
     t = Timer.periodic(Duration(milliseconds: 1000), (timer) {
       setState(() {
         this._codeNumber--;
@@ -121,6 +121,7 @@ class _Login extends State<Login> {
     _imgCodealue.dispose();
     _passwordController.dispose();
     _phoneCodeController.dispose();
+    t.cancel(); //清除定时器
     super.dispose();
   }
 
@@ -354,7 +355,7 @@ class _Login extends State<Login> {
     String encode = await RSAUtils.encodeString(
         this._passwordController.text, mSecret.publicKey);
 
-    print("encode:$encode");
+    print("加密字符串---:$encode");
     var param = {
       'client': 'supplier-app', //登陆客户端
       'deviceName': DeviceUtils.androidDeviceInfo.model, //设备名称
