@@ -179,17 +179,22 @@ class SendGoodsState extends State<SendGoodsPage> {
     print(mOrderDetailData.toString());
     print(mOrderDetailData.consigneeAddress);
     data.fromJson(ConvertUtil.decode(widget.data));
-    // getExpressInfo(data.data);
+//     getExpressInfo(data.data);
   }
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-        child: Scaffold(
-      body: Column(
-        children: [_buildCompany(), _buildAddress(), _buildList()],
-      ),
-    ));
+    return Scaffold(
+        appBar: AppBar(
+          title: new Text('订单详情信息'),
+          centerTitle: true,
+        ),
+        body: SingleChildScrollView(
+          padding: EdgeInsets.only(left:16.0,top: 8.0,right: 16.0,bottom: 8.0),
+          child: Column(
+            children: [_buildCompany(), _buildAddress(), _buildList()],
+          ),
+        ));
   }
 
   Widget _buildCompany() {
@@ -239,39 +244,123 @@ class SendGoodsState extends State<SendGoodsPage> {
   }
 
   Widget _buildList() {
-    Widget widget = Column(children: <Widget>[
-      ListTile(title: Text("订单号:${mOrderDetailData.items[0].orderId}")),
-      Container(
-        height: 200,
-        width: double.infinity,
-        child: ListView.builder(
-            itemCount: mOrderDetailData.items.length,
-            itemBuilder: (BuildContext context, int index) {
-              return Column(
-                children: [
-                  Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      Container(
-                        child: Text("Hello world",
-                            style: TextStyle(color: Colors.white)),
-                        color: Colors.red,
-                      ),
-                      Positioned(
-                        left: 18.0,
-                        child: Text("I am Jack"),
-                      ),
-                      Positioned(
-                        right: 18.0,
-                        child: Text("Your friend"),
-                      )
-                    ],
-                  )
-                ],
-              );
-            }),
-      )
-    ]);
+    Widget widget = Container(
+      child: Column(
+        children: <Widget>[
+          ListTile(
+            title: Text("订单号:${mOrderDetailData.items[0].orderId}"),
+          ),
+          Container(
+              child: ListView.builder(
+//                  itemCount: mOrderDetailData.items.length,
+                  itemCount: 100,
+                  shrinkWrap: true,
+                  physics: new NeverScrollableScrollPhysics(),
+                  itemBuilder: (context, index) {
+                    return Column(
+                      children: <Widget>[
+                        new SizedBox(height: 10,),
+                        Row(
+                          children: <Widget>[
+                            Container(
+                              width: 260.0,
+                              height: 20,
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                  'klsakjjshjfahfakhfakhfhkfskhahfjhfjhfjhfsjhfsjhfjhfjhfsjfajhfjafjfjjhfjhfjhfjhfjhfjhfjhfjhfsasjk',
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  color: Colors.black54,
+                                  fontSize: 16
+                                ),
+
+                              ),
+                            ),
+                            Container(
+                              width: 50.0,
+                              height: 20,
+                              alignment: Alignment.centerRight,
+                              child:Text(mOrderDetailData.items[0].sourcePrice),
+                            ),
+                          ],
+                        ),
+                        new SizedBox(height: 2, ),
+                        Row(
+                          children: <Widget>[
+                            Container(
+                              width: 260.0,
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                  mOrderDetailData.items[0].goodsName,
+                                  maxLines:2),
+                            ),
+                            Container(
+                              width: 50.0,
+                              height: 20,
+                              alignment: Alignment.centerRight,
+                              child:
+                              Text(4.toString()),
+                            ),
+                          ],
+                        ),
+                        new SizedBox(height: 2,),
+                        Row(
+                          children: <Widget>[
+                            Container(
+                              width: 260.0,
+                              height: 20,
+                              alignment: Alignment.centerLeft,
+                              child: Text('学生：'+mOrderDetailData.items[0].relationStudentName),
+                            ),
+                            Container(
+                              width: 50.0,
+                                height: 20,
+                              alignment: Alignment.centerRight,
+                              child:null
+                            ),
+                          ],
+                        ),
+                        new SizedBox(height: 8,),
+                        Divider(height: 1),
+                      ],
+                    );
+                  })),
+        ],
+      ),
+    );
+
+//    Column(children: <Widget>[
+//      ListTile(title: Text("订单号:${mOrderDetailData.items[0].orderId}")),
+//      Container(
+//        child: ListView.builder(
+//            itemCount: mOrderDetailData.items.length,
+//            itemBuilder: (BuildContext context, int index) {
+//              return Column(
+//                children: [
+//                  Stack(
+//                    alignment: Alignment.center,
+//                    children: [
+//                      Container(
+//                        child: Text("Hello world",
+//                            style: TextStyle(color: Colors.white)),
+//                        color: Colors.red,
+//                      ),
+//                      Positioned(
+//                        left: 18.0,
+//                        child: Text("I am Jack"),
+//                      ),
+//                      Positioned(
+//                        right: 18.0,
+//                        child: Text("Your friend"),
+//                      )
+//                    ],
+//                  )
+//                ],
+//              );
+//            }),
+//      ),
+//
+//    ]);
     return widget;
   }
 
