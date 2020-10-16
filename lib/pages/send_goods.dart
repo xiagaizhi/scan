@@ -6,6 +6,7 @@ import 'package:scan/model/order_detail_data.dart';
 import 'package:scan/model/result_data.dart';
 import 'package:scan/network/network_manager.dart';
 import 'package:scan/utils/ConvertUtil.dart';
+import 'package:scan/utils/PageUtil.dart';
 import 'package:scan_plugin/data/scan_result_data.dart';
 import 'package:scan/pages/qr_scan_code.dart';
 
@@ -81,6 +82,7 @@ class SendGoodsState extends State<SendGoodsPage> {
           onTap: (int i) {
             print('i');
             if (i == 0) {
+              PageUtil.scanSingleSend(context);
             } else {
               sendDevices();
             }
@@ -464,7 +466,7 @@ class SendGoodsState extends State<SendGoodsPage> {
               CupertinoDialogAction(
                 child: Text('继续发货'),
                 onPressed: () {
-
+                  PageUtil.scanSingleSend(context);
                 },
               ),
               CupertinoDialogAction(

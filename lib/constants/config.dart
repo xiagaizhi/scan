@@ -8,7 +8,7 @@ import 'dev.dart';
 import 'ienv.dart';
 
 class Config {
-  static Env _env = Env.DEV;
+  static Env _env = Env.QA;
 
   static IEnv getEnv() {
     switch (_env) {
