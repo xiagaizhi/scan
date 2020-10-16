@@ -253,7 +253,7 @@ class _QRCodePageState extends State<QRCodePage> with ICallBack {
                             child: Image(
                               width: 100,
                               height: 100,
-                              image: AssetImage("assets/images/bufahuo.png"),
+                              image: AssetImage("assets/images/fahuo.png"),
                             ),
                           ),
                           onTap: () {
@@ -316,7 +316,7 @@ class _QRCodePageState extends State<QRCodePage> with ICallBack {
                             child: Image(
                               width: 100,
                               height: 100,
-                              image: AssetImage("assets/images/bufahuo.png"),
+                              image: AssetImage("assets/images/shixiao.png"),
                             ),
                           ),
                           onTap: () {
