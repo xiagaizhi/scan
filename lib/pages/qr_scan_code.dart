@@ -1,6 +1,8 @@
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:scan/constants/config.dart';
 import 'package:scan/constants/ienv.dart';
 import 'package:scan/model/result_data.dart';
 import 'package:scan/network/network_manager.dart';
@@ -86,9 +88,51 @@ class _QRCodePageState extends State<QRCodePage> with ICallBack {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: new Text(
-            '电子面单扫描',
-            style: TextStyle(fontSize: 18),
+          title: InkWell(
+            child: new Text(
+              '电子面单扫描',
+              style: TextStyle(fontSize: 18),
+            ),
+            onTap: () {
+              showCupertinoDialog(
+                  context: context,
+                  builder: (context) {
+                    return CupertinoAlertDialog(
+                      title: Text(''),
+                      content: Text('确定切换访问地址'),
+                      actions: <Widget>[
+                        CupertinoDialogAction(
+                          child: Text('dev'),
+                          onPressed: () {
+                            Navigator.of(context).pop('ok');
+                            Config.conStr = 'DEV';
+                          },
+                        ),
+                        CupertinoDialogAction(
+                          child: Text('qa'),
+                          onPressed: () {
+                            Navigator.of(context).pop('ok');
+                            Config.conStr = 'QA';
+                          },
+                        ),
+                        CupertinoDialogAction(
+                          child: Text('pre'),
+                          onPressed: () {
+                            Navigator.of(context).pop('ok');
+                            Config.conStr = 'PRE';
+                          },
+                        ),
+                        CupertinoDialogAction(
+                          child: Text('prod'),
+                          onPressed: () {
+                            Navigator.of(context).pop('ok');
+                            Config.conStr = 'PROD';
+                          },
+                        ),
+                      ],
+                    );
+                  });
+            },
           ),
           leading: InkWell(
             onTap: () {

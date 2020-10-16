@@ -10,17 +10,19 @@ import 'ienv.dart';
 class Config {
   static Env _env = Env.QA;
 
+  static String conStr = 'DEV';
+
   static IEnv getEnv() {
-    switch (_env) {
-      case Env.DEV:
+    switch (conStr) {
+      case 'Dev':
         return Dev();
-      case Env.QA:
+      case 'QA':
         return Qa();
         break;
-      case Env.PRE:
+      case 'PRE':
         return Pre();
         break;
-      case Env.PROD:
+      case 'PROD':
         return Prod();
         break;
     }
