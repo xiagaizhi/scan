@@ -35,65 +35,150 @@ class SendGoodsState extends State<SendGoodsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: new Text('订单详情信息'),
-          centerTitle: true,
-        ),
-        body: SingleChildScrollView(
-          padding:
-              EdgeInsets.only(left: 16.0, top: 8.0, right: 16.0, bottom: 12.0),
-          child: Column(
-            children: <Widget>[
-              new SizedBox(
-                height: 10,
+      appBar: AppBar(
+        title: new Text('订单详情信息'),
+        centerTitle: true,
+      ),
+      body: Column(
+        children: <Widget>[
+          Flexible(
+              fit: FlexFit.tight,
+              child: Container(
+                padding:
+              EdgeInsets.only(left: 16.0, top: 8.0, right: 16.0, bottom: 6.0),
+                child: Column(
+                  children: <Widget>[
+                    new SizedBox(
+                      height: 10,
+                    ),
+                    _buildCompany(),
+                    new SizedBox(
+                      height: 10,
+                    ),
+                    Divider(height: 1),
+                    new SizedBox(
+                      height: 10,
+                    ),
+                    _buildAddress(),
+                    _buildList(),
+                  ],
+                )
               ),
-              _buildCompany(),
-              new SizedBox(
-                height: 10,
-              ),
-              Divider(height: 1),
-              new SizedBox(
-                height: 10,
-              ),
-              _buildAddress(),
-              _buildList(),
-            ],
           ),
-        ),
-        bottomNavigationBar: BottomNavigationBar(
-          items: [
-            BottomNavigationBarItem(
-                icon: Icon(
-                  Icons.aspect_ratio,
+
+          Container(
+            height: 60,
+            width: double.infinity,
+            color: Colors.white,
+            child: Row(
+              children: <Widget>[
+                Container(
+                  width:150,
+                  height: 44,
+                  color: Color.fromRGBO(151, 197, 245, 1),
+                  alignment: Alignment.center,
+                  margin: EdgeInsets.only(left: 20),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: GestureDetector(
+                      child: Container(
+                        alignment: Alignment.center,
+                        child: Text("重新扫码"),
+                      ),
+                      onTap: () {
+                        PageUtil.scanSingleSend(context);
+                      },
+                    ),
+                  ),
                 ),
-                title: Text(
-                  '重新扫码',
-                  style: TextStyle(),
-                )),
-            BottomNavigationBarItem(
-                icon:
-                    Icon(Icons.assignment_turned_in, color: Colors.blueAccent),
-                backgroundColor: Colors.blue,
-                title: Text(
-                  '确认收货',
-                  style: TextStyle(color: Colors.blueAccent),
-                )),
-          ],
-          onTap: (int i) {
-            print('i');
-            if (i == 0) {
-              PageUtil.scanSingleSend(context);
-            } else {
-              sendDevices();
-            }
-          },
-        ));
+                Flexible(
+                  child: SizedBox(),
+                  fit: FlexFit.tight,
+                ),
+                Container(
+                  width:150,
+                  height: 44,
+                  color: Color.fromRGBO(37, 135, 235, 1),
+                  margin: EdgeInsets.only(right: 20),
+                  child:  Align(
+                    alignment: Alignment.centerRight,
+                    child: GestureDetector(
+                      child: Container(
+                        alignment: Alignment.center,
+                        child: Text("确认发货"),
+                      ),
+                      onTap: () {
+                        sendDevices();
+                      },
+                    ),
+                  ),
+                ),
+
+              ],
+            ),
+          )
+        ],
+      ),
+
+//        body: SingleChildScrollView(
+//          padding:
+//              EdgeInsets.only(left: 16.0, top: 8.0, right: 16.0, bottom: 12.0),
+//          child: Column(
+//            children: <Widget>[
+//              new SizedBox(
+//                height: 10,
+//              ),
+//              _buildCompany(),
+//              new SizedBox(
+//                height: 10,
+//              ),
+//              Divider(height: 1),
+//              new SizedBox(
+//                height: 10,
+//              ),
+//              _buildAddress(),
+//              _buildList(),
+//            ],
+//          ),
+//        ),
+//        bottomNavigationBar: BottomNavigationBar(
+//          items: [
+//            BottomNavigationBarItem(
+//                icon: Icon(
+//                  Icons.aspect_ratio,
+//                ),
+//                title: Text(
+//                  '重新扫码',
+//                  style: TextStyle(),
+//                )),
+//            BottomNavigationBarItem(
+//                icon:
+//                    Icon(Icons.assignment_turned_in, color: Colors.blueAccent),
+//                backgroundColor: Colors.blue,
+//                title: Text(
+//                  '确认收货',
+//                  style: TextStyle(color: Colors.blueAccent),
+//                )),
+//          ],
+//          onTap: (int i) {
+//            print('i');
+//            if (i == 0) {
+//              PageUtil.scanSingleSend(context);
+//            } else {
+//              sendDevices();
+//            }
+//          },
+//        )
+    );
   }
 
   Widget _buildCompany() {
     Widget widget = Row(
       children: [
-        Image(width: 30,height: 30,image: AssetImage("assets/images/kuaidi.png")),
+        Image(
+            width: 30,
+            height: 30,
+            image: AssetImage("assets/images/kuaidi.png")),
         Column(
           children: [
             Container(
@@ -120,7 +205,10 @@ class SendGoodsState extends State<SendGoodsPage> {
   Widget _buildAddress() {
     Widget widget = Row(
       children: [
-        Image(width: 26,height: 26,image: AssetImage("assets/images/dizhi.png")),
+        Image(
+            width: 26,
+            height: 26,
+            image: AssetImage("assets/images/dizhi.png")),
         Column(
           children: [
             Container(
@@ -135,10 +223,13 @@ class SendGoodsState extends State<SendGoodsPage> {
               width: 280,
               padding: EdgeInsets.only(left: 10),
               alignment: Alignment.centerLeft,
-              child: Text("${_isStr(mOrderDetailData.consigneeProvinceName)}" +
-                  "${_isStr(mOrderDetailData.consigneeCityName)}" +
-                  "${_isStr(mOrderDetailData.consigneeAreaName)}" +
-                  "${_isStr(mOrderDetailData.consigneeAddress)}",maxLines: 2,),
+              child: Text(
+                "${_isStr(mOrderDetailData.consigneeProvinceName)}" +
+                    "${_isStr(mOrderDetailData.consigneeCityName)}" +
+                    "${_isStr(mOrderDetailData.consigneeAreaName)}" +
+                    "${_isStr(mOrderDetailData.consigneeAddress)}",
+                maxLines: 2,
+              ),
             ),
           ],
         )
@@ -424,14 +515,17 @@ class SendGoodsState extends State<SendGoodsPage> {
             title: Text('提示'),
             content: Container(
               height: 46.0,
-              padding:EdgeInsets.only(left:10.0,top:10.0,right:10.0,bottom:2.0),
+              padding: EdgeInsets.only(
+                  left: 10.0, top: 10.0, right: 10.0, bottom: 2.0),
               alignment: Alignment.bottomLeft,
-              child: Text(msg,
+              child: Text(
+                msg,
                 textAlign: TextAlign.left,
                 style: TextStyle(
-                color: Color.fromRGBO(131, 131, 131, 1),
-                    fontSize: 14,
-              ),),
+                  color: Color.fromRGBO(131, 131, 131, 1),
+                  fontSize: 14,
+                ),
+              ),
             ),
             actions: <Widget>[
               CupertinoDialogAction(
@@ -453,14 +547,17 @@ class SendGoodsState extends State<SendGoodsPage> {
             title: Text('提示'),
             content: Container(
               height: 46.0,
-              padding:EdgeInsets.only(left:10.0,top:10.0,right:10.0,bottom:2.0),
+              padding: EdgeInsets.only(
+                  left: 10.0, top: 10.0, right: 10.0, bottom: 2.0),
               alignment: Alignment.center,
-              child: Text(msg,
+              child: Text(
+                msg,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: Color.fromRGBO(131, 131, 131, 1),
                   fontSize: 14,
-                ),),
+                ),
+              ),
             ),
             actions: <Widget>[
               CupertinoDialogAction(
@@ -489,24 +586,24 @@ class SendGoodsState extends State<SendGoodsPage> {
   //确认发货
   sendDevices() async {
     var extData = {
-        'consignmentCompanyId':mExpressData.consignmentCompanyId,
-      'consignmentNumber':mExpressData.expressNo,
-      'consignmentRemark':mOrderDetailData.consignmentRemark,
-      'consignmentType':'EXPRESS',
-      'logisticsType':mOrderDetailData.logisticsType,
-      'supplierId':mOrderDetailData.supplierId
+      'consignmentCompanyId': mExpressData.consignmentCompanyId,
+      'consignmentNumber': mExpressData.expressNo,
+      'consignmentRemark': mOrderDetailData.consignmentRemark,
+      'consignmentType': 'EXPRESS',
+      'logisticsType': mOrderDetailData.logisticsType,
+      'supplierId': mOrderDetailData.supplierId
     };
     var data = {
       'orderId': mOrderDetailData.id,
-      'status':'WAIT_CONFIRM',
-      'extData':extData
+      'status': 'WAIT_CONFIRM',
+      'extData': extData
     };
     ResultData resultData = await HttpManager.getInstance(type: UrlType.order)
         .post("/admin/order/deliver-goods", data);
 
     print('ssssss');
 
-    if(resultData.status != 'OK'){
+    if (resultData.status != 'OK') {
       showErrorDialog(resultData.errorMsg.toString());
       return;
     }
