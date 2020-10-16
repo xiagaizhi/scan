@@ -7,6 +7,7 @@ import 'package:scan/model/result_data.dart';
 import 'package:scan/network/network_manager.dart';
 import 'package:scan/utils/ConvertUtil.dart';
 import 'package:scan/utils/PageUtil.dart';
+import 'package:scan/view/empty-view.dart';
 import 'package:scan_plugin/data/scan_result_data.dart';
 import 'package:scan/pages/qr_scan_code.dart';
 
@@ -32,6 +33,8 @@ class SendGoodsState extends State<SendGoodsPage> {
     getExpressInfo(data.data);
   }
 
+  Widget empty = EmptyView.emptyView;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,7 +42,8 @@ class SendGoodsState extends State<SendGoodsPage> {
         title: new Text('订单详情信息'),
         centerTitle: true,
       ),
-      body: Column(
+      body: mOrderDetailData==null||mOrderDetailData.id==null?empty:
+      Column(
         children: <Widget>[
           Flexible(
               fit: FlexFit.tight,
@@ -119,56 +123,6 @@ class SendGoodsState extends State<SendGoodsPage> {
           )
         ],
       ),
-
-//        body: SingleChildScrollView(
-//          padding:
-//              EdgeInsets.only(left: 16.0, top: 8.0, right: 16.0, bottom: 12.0),
-//          child: Column(
-//            children: <Widget>[
-//              new SizedBox(
-//                height: 10,
-//              ),
-//              _buildCompany(),
-//              new SizedBox(
-//                height: 10,
-//              ),
-//              Divider(height: 1),
-//              new SizedBox(
-//                height: 10,
-//              ),
-//              _buildAddress(),
-//              _buildList(),
-//            ],
-//          ),
-//        ),
-//        bottomNavigationBar: BottomNavigationBar(
-//          items: [
-//            BottomNavigationBarItem(
-//                icon: Icon(
-//                  Icons.aspect_ratio,
-//                ),
-//                title: Text(
-//                  '重新扫码',
-//                  style: TextStyle(),
-//                )),
-//            BottomNavigationBarItem(
-//                icon:
-//                    Icon(Icons.assignment_turned_in, color: Colors.blueAccent),
-//                backgroundColor: Colors.blue,
-//                title: Text(
-//                  '确认收货',
-//                  style: TextStyle(color: Colors.blueAccent),
-//                )),
-//          ],
-//          onTap: (int i) {
-//            print('i');
-//            if (i == 0) {
-//              PageUtil.scanSingleSend(context);
-//            } else {
-//              sendDevices();
-//            }
-//          },
-//        )
     );
   }
 
