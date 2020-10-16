@@ -2,14 +2,14 @@ import 'dart:io';
 
 import 'package:dio/adapter.dart';
 import 'package:dio/dio.dart';
+import 'package:scan/constants/config.dart';
+import 'package:scan/constants/ienv.dart';
 import 'package:scan/model/result_data.dart';
 import 'package:scan/network/response_interceptor.dart';
 import 'package:scan/platform/platform_log.dart';
 import 'package:scan/utils/ShareUtils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'config.dart';
-import 'ienv.dart';
 import 'log_interceptor.dart';
 
 class HttpManager {

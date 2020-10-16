@@ -1,5 +1,5 @@
+import 'package:scan/constants/ienv.dart';
 import 'package:scan/model/result_data.dart';
-import 'package:scan/network/ienv.dart';
 import 'package:scan/network/network_manager.dart';
 
 class NetWorkUtil {

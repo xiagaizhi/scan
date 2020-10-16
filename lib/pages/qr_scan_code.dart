@@ -1,25 +1,19 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:scan/model/order_data.dart';
+import 'package:scan/constants/ienv.dart';
 import 'package:scan/model/result_data.dart';
 import 'package:scan/network/network_manager.dart';
 import 'package:scan/router/Routes.dart';
 import 'package:scan/utils/DeviceUtils.dart';
-import 'package:scan/sql/order_table.dart';
-import 'package:scan/sql/sql_helper.dart';
-import 'package:scan/utils/CommonUtil.dart';
 import 'package:scan/utils/NavigatorUtil.dart';
 import 'package:scan/utils/PageUtil.dart';
 import 'package:scan/utils/ShareUtils.dart';
 import 'package:scan/utils/ToastUtils.dart';
 import 'package:scan_plugin/call_back.dart';
-import 'package:scan_plugin/data/scan_config_data.dart';
 import 'package:scan_plugin/data/scan_result_data.dart';
 import 'package:scan_plugin/scan_plugin.dart';
 import 'package:scan/pages/login.dart';
-import 'package:scan/network/ienv.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:scan/model/user_info_entity.dart';
 

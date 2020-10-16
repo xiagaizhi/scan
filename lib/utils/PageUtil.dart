@@ -2,11 +2,11 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:scan/constants/ienv.dart';
 import 'package:scan/constants/string_constant.dart';
 import 'package:scan/model/express_data_entity.dart';
 import 'package:scan/model/order_data.dart';
 import 'package:scan/model/result_data.dart';
-import 'package:scan/network/ienv.dart';
 import 'package:scan/network/network_manager.dart';
 import 'package:scan/router/Routes.dart';
 import 'package:scan/sql/failure_order_table.dart';

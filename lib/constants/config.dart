@@ -1,6 +1,10 @@
 
-import 'package:scan/network/dev.dart';
 
+import 'package:scan/constants/pre.dart';
+import 'package:scan/constants/prod.dart';
+import 'package:scan/constants/qa.dart';
+
+import 'dev.dart';
 import 'ienv.dart';
 
 class Config {
@@ -11,10 +15,13 @@ class Config {
       case Env.DEV:
         return Dev();
       case Env.QA:
+        return Qa();
         break;
       case Env.PRE:
+        return Pre();
         break;
       case Env.PROD:
+        return Prod();
         break;
     }
     return Dev();

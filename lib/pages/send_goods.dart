@@ -1,19 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:scan/constants/ienv.dart';
 import 'package:scan/model/express_data_entity.dart';
 import 'package:scan/model/order_detail_data.dart';
 import 'package:scan/model/result_data.dart';
-import 'package:scan/network/ienv.dart';
 import 'package:scan/network/network_manager.dart';
-import 'package:scan/router/Routes.dart';
 import 'package:scan/utils/ConvertUtil.dart';
-import 'package:scan/utils/FileUtils.dart';
-import 'package:scan_plugin/data/scan_config_data.dart';
 import 'package:scan_plugin/data/scan_result_data.dart';
-import 'package:scan/utils/ToastUtils.dart';
 import 'package:scan/pages/qr_scan_code.dart';
-import 'package:scan_plugin/scan_plugin.dart';
 
 class SendGoodsPage extends StatefulWidget {
   final String data;
@@ -97,18 +91,18 @@ class SendGoodsState extends State<SendGoodsPage> {
   Widget _buildCompany() {
     Widget widget = Row(
       children: [
-        Icon(Icons.local_gas_station),
+        Image(width: 30,height: 30,image: AssetImage("assets/images/kuaidi.png")),
         Column(
           children: [
             Container(
-              width: 300,
+              width: 280,
               padding: EdgeInsets.only(left: 10),
               alignment: Alignment.centerLeft,
               child: Text(
                   "快递公司：${mExpressData == null ? '-' : mExpressData.consignmentCompanyName}"),
             ),
             Container(
-              width: 300,
+              width: 280,
               padding: EdgeInsets.only(left: 10),
               alignment: Alignment.centerLeft,
               child: Text(
@@ -124,11 +118,11 @@ class SendGoodsState extends State<SendGoodsPage> {
   Widget _buildAddress() {
     Widget widget = Row(
       children: [
-        Icon(Icons.local_gas_station),
+        Image(width: 26,height: 26,image: AssetImage("assets/images/dizhi.png")),
         Column(
           children: [
             Container(
-              width: 300,
+              width: 280,
               padding: EdgeInsets.only(left: 10),
               alignment: Alignment.centerLeft,
               child: Text("${_isStr(mOrderDetailData.creatorName)}" +
@@ -136,13 +130,13 @@ class SendGoodsState extends State<SendGoodsPage> {
                   "${_isStr(mOrderDetailData.creatorMobile)}"),
             ),
             Container(
-              width: 300,
+              width: 280,
               padding: EdgeInsets.only(left: 10),
               alignment: Alignment.centerLeft,
               child: Text("${_isStr(mOrderDetailData.consigneeProvinceName)}" +
                   "${_isStr(mOrderDetailData.consigneeCityName)}" +
                   "${_isStr(mOrderDetailData.consigneeAreaName)}" +
-                  "${_isStr(mOrderDetailData.consigneeAddress)}"),
+                  "${_isStr(mOrderDetailData.consigneeAddress)}",maxLines: 2,),
             ),
           ],
         )
