@@ -91,109 +91,246 @@ class _QRCodePageState extends State<QRCodePage> with ICallBack {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: new Text('电子面单扫描',style: TextStyle(
-          fontSize: 18
-        ),),
-        leading: InkWell(
-          onTap: () {
-            NavigatorUtil.go(context, Routes.noSendConfirm);
-          },
-          child: Container(
-            alignment: Alignment.center,
-            child: Image(
-              width: 24,
-              height: 24,
-              image: AssetImage("assets/images/scan.png"),
-            ),
+        appBar: AppBar(
+          title: new Text(
+            '电子面单扫描',
+            style: TextStyle(fontSize: 18),
           ),
-        ),
-        backgroundColor: Colors.blue,
-        centerTitle: true,
-        actions: <Widget>[
-          InkWell(
+          leading: InkWell(
             onTap: () {
-              //跳转并关闭当前页面
-              Navigator.pushAndRemoveUntil(
-                context,
-                new MaterialPageRoute(builder: (context) => new Login()),
-                (route) => route == null,
-              );
+              NavigatorUtil.go(context, Routes.noSendConfirm);
             },
             child: Container(
               alignment: Alignment.center,
-              margin: EdgeInsets.only(right: 16),
               child: Image(
                 width: 24,
                 height: 24,
-                image: AssetImage("assets/images/exit.png"),
+                image: AssetImage("assets/images/scan.png"),
               ),
             ),
           ),
-        ],
-      ),
-      body: Center(
-        child: Column(
-          children: <Widget>[
-            Card(
-//              color: Colors.blue,
-                elevation: 10,
-                margin: EdgeInsets.all(6),
-                child: Container(
-                  height: 100,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      ListTile(
-                          dense: true,
-                          title: Text('不发货面单扫码'),
-                          subtitle: Text("可用于标记各发货批次中现在“不发货”的订单"),
-                          onTap: () {
-                            scanNoSend(context);
-                          }),
-                    ],
-                  ),
-                )),
-            Card(
-                elevation: 10,
-                margin: EdgeInsets.all(6),
-                child: Container(
-                  height: 100,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      ListTile(
-                          dense: true,
-                          title: Text('单个面单发货扫码'),
-                          subtitle: Text("可用于单个面单的订单信息查询及发货操作"),
-                          onTap: () {
-                            scanSingleSend(context);
-                          }),
-                    ],
-                  ),
-                )),
-            Card(
-                elevation: 10,
-                margin: EdgeInsets.all(6),
-                child: Container(
-                  height: 100,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      ListTile(
-                          dense: true,
-                          title: Text('失效面单扫描'),
-                          subtitle: Text("可用于标记已失效面单"),
-                          onTap: () {
-                            scan(type: ScanType.ALL);
-                          }),
-                    ],
-                  ),
-                )),
+          backgroundColor: Colors.blue,
+          centerTitle: true,
+          actions: <Widget>[
+            InkWell(
+              onTap: () {
+                //跳转并关闭当前页面
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  new MaterialPageRoute(builder: (context) => new Login()),
+                  (route) => route == null,
+                );
+              },
+              child: Container(
+                alignment: Alignment.center,
+                margin: EdgeInsets.only(right: 16),
+                child: Image(
+                  width: 24,
+                  height: 24,
+                  image: AssetImage("assets/images/exit.png"),
+                ),
+              ),
+            ),
           ],
         ),
-      ),
-    );
+        body: SingleChildScrollView(
+          child: Center(
+            child: Column(
+              children: <Widget>[
+                Card(
+                  elevation: 10,
+                  margin: EdgeInsets.all(6),
+                  child: Container(
+                    height: 160.0,
+                    child: Row(
+                      children: <Widget>[
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(1),
+                          child: Container(
+                            width: 6,
+                            height: 40,
+                            color: Color.fromRGBO(243, 119, 109, 1),
+                            child: Text(''),
+                          ),
+                        ),
+                        Container(
+                          width: 220,
+                          child: Column(
+                            children: <Widget>[
+                              Container(
+                                width: 160,
+                                alignment: Alignment.center,
+                                margin: EdgeInsets.only(top: 40),
+                                child: Text('可用于标记各发货批次中现在“不发货”的订单'),
+                              ),
+                              Container(
+                                  width: 160,
+                                  alignment: Alignment.center,
+                                  margin: EdgeInsets.only(top: 8),
+                                  child: ButtonTheme(
+                                    minWidth: 145.0, //设置最小宽度
+                                    height: 32.0,
+                                    child: RaisedButton(
+                                      color: Color.fromRGBO(243, 119, 109, 1),
+                                      textColor: Colors.white,
+                                      child: Text('不发货面单扫码'),
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(5.0)),
+                                      onPressed: () {},
+                                    ),
+                                  ))
+                            ],
+                          ),
+                        ),
+                        InkWell(
+                          child: Container(
+                            width: 100,
+                            child: Image(
+                              width: 100,
+                              height: 100,
+                              image: AssetImage("assets/images/bufahuo.png"),
+                            ),
+                          ),
+                          onTap: () {
+                            scanNoSend(context);
+                          },
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+                Card(
+                  elevation: 10,
+                  margin: EdgeInsets.all(6),
+                  child: Container(
+                    height: 160.0,
+                    child: Row(
+                      children: <Widget>[
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(1),
+                          child: Container(
+                            width: 6,
+                            height: 40,
+                            color: Color.fromRGBO(37, 135, 235, 1),
+                            child: Text(''),
+                          ),
+                        ),
+
+                        Container(
+                          width: 220,
+                          child: Column(
+                            children: <Widget>[
+                              Container(
+                                width: 160,
+                                alignment: Alignment.center,
+                                margin: EdgeInsets.only(top: 40),
+                                child: Text('可用于单个面单的订单信息查询及发货操作'),
+                              ),
+                              Container(
+                                  width: 160,
+                                  alignment: Alignment.center,
+                                  margin: EdgeInsets.only(top: 8),
+                                  child: ButtonTheme(
+                                    minWidth: 145.0, //设置最小宽度
+                                    height: 32.0,
+                                    child: RaisedButton(
+                                      color: Color.fromRGBO(37, 135, 235, 1),
+                                      textColor: Colors.white,
+                                      child: Text('单个面单发货扫码'),
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(5.0)),
+                                      onPressed: () {},
+                                    ),
+                                  ))
+                            ],
+                          ),
+                        ),
+                        InkWell(
+                          child: Container(
+                            width: 100,
+                            child: Image(
+                              width: 100,
+                              height: 100,
+                              image: AssetImage("assets/images/bufahuo.png"),
+                            ),
+                          ),
+                          onTap: () {
+                            scanSingleSend(context);
+                          },
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+                Card(
+                  elevation: 10,
+                  margin: EdgeInsets.all(6),
+                  child: Container(
+                    height: 160.0,
+                    child: Row(
+                      children: <Widget>[
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(1),
+                          child: Container(
+                            width: 6,
+                            height: 40,
+                            color: Color.fromRGBO(245, 157, 51, 1),
+                            child: Text(''),
+                          ),
+                        ),
+                        Container(
+                          width: 220,
+                          child: Column(
+                            children: <Widget>[
+                              Container(
+                                width: 160,
+                                alignment: Alignment.center,
+                                margin: EdgeInsets.only(top: 40),
+                                child: Text('可用于标记已失效面单'),
+                              ),
+                              Container(
+                                  width: 160,
+                                  alignment: Alignment.center,
+                                  margin: EdgeInsets.only(top: 8),
+                                  child: ButtonTheme(
+                                    minWidth: 145.0, //设置最小宽度
+                                    height: 32.0,
+                                    child: RaisedButton(
+                                      color: Color.fromRGBO(245, 157, 51, 1),
+                                      textColor: Colors.white,
+                                      child: Text('失效面单扫描'),
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(5.0)),
+                                      onPressed: () {},
+                                    ),
+                                  ))
+                            ],
+                          ),
+                        ),
+                        InkWell(
+                          child: Container(
+                            width: 100,
+                            child: Image(
+                              width: 100,
+                              height: 100,
+                              image: AssetImage("assets/images/bufahuo.png"),
+                            ),
+                          ),
+                          onTap: () {
+                            scan(type: ScanType.ALL);
+                          },
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ));
   }
 
   Future scanNoSend(BuildContext context) async {
