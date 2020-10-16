@@ -41,6 +41,14 @@ class SqlHelper {
     return await db.rawDelete('DELETE FROM $name WHERE $id = $id');
   }
 
+  static Future<int> deleteByColumn(
+      BaseTable table, String columnName, dynamic columnId) async {
+    var db = await table.getDataBase();
+    var name = table.tableName();
+    return await db
+        .rawDelete('DELETE FROM $name WHERE $columnName = $columnId');
+  }
+
   static Future<int> deleteAll(BaseTable table) async {
     var db = await table.getDataBase();
     var name = table.tableName();

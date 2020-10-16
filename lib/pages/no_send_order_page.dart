@@ -1,15 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:scan/model/order_data.dart';
-import 'package:scan/model/result_data.dart';
-import 'package:scan/sql/order_table.dart';
-import 'package:scan/sql/sql_helper.dart';
-import 'package:scan/utils/NetWorkUtil.dart';
+import 'package:provider/provider.dart';
 import 'package:scan/utils/PageUtil.dart';
-import 'package:scan/utils/ToastUtils.dart';
-import 'package:scan/utils/dialog_manager.dart';
-import 'package:scan_plugin/call_back.dart';
-import 'package:scan_plugin/data/scan_result_data.dart';
-import 'package:scan_plugin/scan_plugin.dart';
+import 'package:scan/pages/no_send_order_helper.dart';
 
 class NoSendOrderPage extends StatefulWidget {
   @override
@@ -19,134 +11,72 @@ class NoSendOrderPage extends StatefulWidget {
 }
 
 class NoSendOrderState extends State<NoSendOrderPage> {
-  List<CompanyData> dataList = List();
-  List<OrderData> orderDataList = List();
-
-  void handleCompanyData(OrderData data) {
-    for (CompanyData company in dataList) {
-      if (company.id == data.supplierId) {
-        for (BatchData batchData in company.batchList) {
-          if (batchData.batchNumber == data.taskId) {
-            GoodsData goodsData =
-                GoodsData(data.taskItemId, data.taskItemId, data.needDeliver);
-            batchData.goodsList.add(goodsData);
-            setState(() {});
-            return;
-          }
-        }
-        BatchData batchData = BatchData();
-        batchData.batchNumber = data.taskId;
-        List<GoodsData> goodsList = List();
-        GoodsData goodsData =
-            GoodsData(data.taskItemId, data.taskItemId, data.needDeliver);
-        goodsList.add(goodsData);
-        batchData.goodsList = goodsList;
-        company.batchList.add(batchData);
-        setState(() {});
-        return;
-      }
-    }
-    CompanyData companyData = CompanyData();
-    companyData.name = data.supplierName;
-    companyData.id = data.supplierId;
-    List<BatchData> batchList = List();
-    BatchData batchData = BatchData();
-    batchData.batchNumber = data.taskId;
-    List<GoodsData> goodsList = List();
-    GoodsData goodsData =
-        GoodsData(data.taskItemId, data.taskItemId, data.needDeliver);
-    goodsList.add(goodsData);
-    batchData.goodsList = goodsList;
-    batchList.add(batchData);
-    companyData.batchList = batchList;
-    dataList.add(companyData);
-    setState(() {
-      print("first  setState----------------------------");
-    });
-  }
-
-  initData() async {
-    orderDataList = List();
-    dataList = List();
-    OrderTable orderTable = OrderTable();
-    // SqlHelper.deleteAll(orderTable);
-    List<Map<String, dynamic>> list = await SqlHelper.queryAll(orderTable);
-    for (Map<String, dynamic> map in list) {
-      OrderData data = new OrderData();
-      orderDataList.add(data);
-      data.fromJson(map);
-      handleCompanyData(data);
-    }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    initData();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
+  NoSendOrderHelper _helper = NoSendOrderHelper();
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-        child: Scaffold(
-      appBar: AppBar(
-        title: Text("不发货面单确认"),
-      ),
-      body: Column(
-        children: <Widget>[
-          Flexible(
-              fit: FlexFit.tight,
-              child: CustomScrollView(
-                slivers: _buildListView(),
-              )),
-          Container(
-            height: 64,
-            width: double.infinity,
-            color: Colors.blue,
-            child: Row(
-              children: <Widget>[
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: GestureDetector(
-                    child: Container(
-                      padding: EdgeInsets.only(left: 30),
-                      child: Text("继续扫码"),
+    return WillPopScope(
+      onWillPop: _onWillPop,
+      child: SafeArea(
+          child: Scaffold(
+        appBar: AppBar(
+          title: Text("不发货面单确认"),
+        ),
+        body: FutureBuilder(
+            future: _helper.initData(),
+            builder: (BuildContext context, AsyncSnapshot sh) {
+              return Column(
+                children: <Widget>[
+                  Flexible(
+                      fit: FlexFit.tight,
+                      child: CustomScrollView(
+                        slivers: _buildListView(context),
+                      )),
+                  Container(
+                    height: 64,
+                    width: double.infinity,
+                    color: Colors.blue,
+                    child: Row(
+                      children: <Widget>[
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: GestureDetector(
+                            child: Container(
+                              padding: EdgeInsets.only(left: 30),
+                              child: Text("继续扫码"),
+                            ),
+                            onTap: () {
+                              _onReStartScanClick(context);
+                            },
+                          ),
+                        ),
+                        Flexible(
+                          child: SizedBox(),
+                          fit: FlexFit.tight,
+                        ),
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: GestureDetector(
+                            child: Container(
+                              padding: EdgeInsets.only(right: 30),
+                              child: Text("确认提交"),
+                            ),
+                            onTap: () {
+                              _onConfirmClick(context);
+                            },
+                          ),
+                        ),
+                      ],
                     ),
-                    onTap: () {
-                      _onReStartScanClick(context);
-                    },
-                  ),
-                ),
-                Flexible(
-                  child: SizedBox(),
-                  fit: FlexFit.tight,
-                ),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: GestureDetector(
-                    child: Container(
-                      padding: EdgeInsets.only(right: 30),
-                      child: Text("确认提交"),
-                    ),
-                    onTap: () {
-                      _onConfirmClick(context);
-                    },
-                  ),
-                ),
-              ],
-            ),
-          )
-        ],
-      ),
-    ));
+                  )
+                ],
+              );
+            }),
+      )),
+    );
   }
 
-  List<Widget> _buildListView() {
+  List<Widget> _buildListView(context) {
     List<Widget> slivers = List();
     Widget tip = SliverToBoxAdapter(
       child: Container(
@@ -158,13 +88,12 @@ class NoSendOrderState extends State<NoSendOrderPage> {
       ),
     );
     slivers.add(tip);
-    for (int i = 0; i < dataList.length; i++) {
-      CompanyData companyData = dataList[i];
+    for (int i = 0; i < _helper.dataList.length; i++) {
+      CompanyData companyData = _helper.dataList[i];
       SliverList sliverList = SliverList(
         delegate:
             new SliverChildBuilderDelegate((BuildContext context, int index) {
           //创建列表项
-          print(companyData.batchList[index].goodsList[0].needDeliver);
           return Column(
             children: <Widget>[
               Offstage(
@@ -175,13 +104,14 @@ class NoSendOrderState extends State<NoSendOrderPage> {
                     Text("${companyData.name}"),
                     Container(
                       padding: EdgeInsets.only(left: 18),
-                      child: Text("${_totalBatch(companyData.batchList)}条"),
+                      child:
+                          Text("${_helper.totalBatch(companyData.batchList)}条"),
                     )
                   ],
                 ),
               ),
               Offstage(
-                offstage: _isHideBatch(companyData.batchList[index]),
+                offstage: _helper.isHideBatch(companyData.batchList[index]),
                 child: ExpansionTile(
                   title: Container(
                     padding: EdgeInsets.only(left: 10),
@@ -191,14 +121,14 @@ class NoSendOrderState extends State<NoSendOrderPage> {
                         Container(
                           padding: EdgeInsets.only(left: 18),
                           child: Text(
-                              "${_totalGoods(companyData.batchList[index].goodsList)}条"),
+                              "${_helper.totalGoods(companyData.batchList[index].goodsList)}条"),
                         )
                       ],
                     ),
                   ),
                   children: companyData.batchList[index].goodsList
                       .map((item) => Offstage(
-                            offstage: item.needDeliver == 0,
+                            offstage: item.needDeliver == 1,
                             child: Container(
                               padding: EdgeInsets.only(left: 15, right: 5),
                               height: 70,
@@ -251,42 +181,9 @@ class NoSendOrderState extends State<NoSendOrderPage> {
     return slivers;
   }
 
-  _isHideBatch(BatchData batchData) {
-    bool hide = true;
-    for (GoodsData goodsData in batchData.goodsList) {
-      if (goodsData.needDeliver == 1) {
-        hide = false;
-        break;
-      }
-    }
-    return hide;
-  }
-
-  _totalBatch(List<BatchData> list) {
-    int total = 0;
-    for (BatchData batchData in list) {
-      bool has = false;
-      for (GoodsData goodsData in batchData.goodsList) {
-        if (goodsData.needDeliver == 1) {
-          has = true;
-          break;
-        }
-      }
-      if (has) {
-        total++;
-      }
-    }
-    return total;
-  }
-
-  _totalGoods(List<GoodsData> goodsList) {
-    int total = 0;
-    for (GoodsData goodsData in goodsList) {
-      if (goodsData.needDeliver == 1) {
-        total++;
-      }
-    }
-    return total;
+  Future<bool> _onWillPop() async {
+    _helper.deleteAllSendOrder();
+    return true;
   }
 
   _onDeleteClick(CompanyData companyData, GoodsData goodsData) async {
@@ -307,7 +204,7 @@ class NoSendOrderState extends State<NoSendOrderPage> {
               ),
               FlatButton(
                 onPressed: () {
-                  handleDelete(companyData, goodsData);
+                  _helper.handleDelete(companyData, goodsData);
                   Navigator.pop(context);
                 },
                 textColor: Colors.red,
@@ -318,28 +215,10 @@ class NoSendOrderState extends State<NoSendOrderPage> {
         });
   }
 
-  handleDelete(CompanyData companyData, GoodsData item) async {
-    setState(() {
-      item.needDeliver = 0;
-      for (BatchData batchData in companyData.batchList) {
-        for (GoodsData goodsData in batchData.goodsList) {
-          if (goodsData.taskItemId == item.taskItemId) {
-            goodsData.needDeliver = item.needDeliver;
-          }
-        }
-      }
-    });
-    OrderTable orderTable = OrderTable();
-    await SqlHelper.update(orderTable,
-        {"taskItemId": item.taskItemId, "needDeliver": item.needDeliver});
-  }
-
   _onReStartScanClick(BuildContext context) async {
     print("继续扫码");
     await PageUtil.scanNoSend(context, false);
-    setState(() {
-      initData();
-    });
+    _helper.initData();
   }
 
   _onConfirmClick(parentContext) async {
@@ -362,7 +241,7 @@ class NoSendOrderState extends State<NoSendOrderPage> {
               FlatButton(
                 onPressed: () {
                   Navigator.pop(context);
-                  postSendGoods(parentContext);
+                  _helper.postSendGoods(parentContext);
                 },
                 textColor: Colors.red,
                 child: Text('确认'),
@@ -370,65 +249,5 @@ class NoSendOrderState extends State<NoSendOrderPage> {
             ],
           );
         });
-  }
-
-  postSendGoods(context) async {
-    OrderTable orderTable = OrderTable();
-    List<Map<String, dynamic>> list = await SqlHelper.queryAll(orderTable);
-    ResultData resultData = await NetWorkUtil.updateNoSendOrder(list);
-    if (resultData.isSuccess()) {
-      ToastUtils.showToast_1("操作成功");
-      SqlHelper.deleteAll(orderTable);
-      setState(() {
-        dataList = List();
-      });
-    } else {
-      DialogManger.getInstance().showNormalDialog(context, resultData.errorMsg);
-    }
-  }
-}
-
-class ExpandStateBean {
-  var isOpen;
-  var index;
-
-  ExpandStateBean(this.index, this.isOpen);
-}
-
-class CompanyData {
-  dynamic name;
-  dynamic id;
-  List<BatchData> batchList;
-
-  @override
-  String toString() {
-    return 'CompanyData{name: $name, id: $id, batchList: $batchList}';
-  }
-
-  CompanyData.name(this.name, this.id, this.batchList);
-
-  CompanyData();
-}
-
-class BatchData {
-  dynamic batchNumber;
-  List<GoodsData> goodsList;
-
-  @override
-  String toString() {
-    return 'BatchData{batchNumber: $batchNumber, goodsList: $goodsList}';
-  }
-}
-
-class GoodsData {
-  dynamic expressNumber;
-  dynamic taskItemId;
-  dynamic needDeliver;
-
-  GoodsData(this.expressNumber, this.taskItemId, this.needDeliver);
-
-  @override
-  String toString() {
-    return 'GoodsData{expressNumber: $expressNumber, taskItemId: $taskItemId, needDeliver: $needDeliver}';
   }
 }

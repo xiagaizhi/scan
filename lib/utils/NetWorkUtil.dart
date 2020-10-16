@@ -16,12 +16,19 @@ class NetWorkUtil {
   }
 
   ///获取物流单基本信息
-  static Future<ResultData> getLogisticsOrderInfo(List<dynamic> list) async {
+  static Future<ResultData> getLogisticsOrderInfo(expressNo) async {
     return await HttpManager.getInstance(type: UrlType.logistics)
         .post("/admin/eorder-using/get-eorder-base-info", {
-      "expressNo": '252314540522',
+      "expressNo": expressNo,
       "expressStatus": ['0'],
       "status": ['1', '3']
     });
+  }
+
+  /// 通过物流单获取订单信息
+  static Future<ResultData> getOrderByExpress(expressId) async {
+    return await HttpManager.getInstance(type: UrlType.logistics).post(
+        "/admin/print-task-item/get-base-order-by-express",
+        {"expressNo": expressId});
   }
 }

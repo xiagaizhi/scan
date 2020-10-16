@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:scan/model/express_data_entity.dart';
 import 'package:scan/model/result_data.dart';
-import 'package:scan/pages/no_send_order_page.dart';
 import 'package:scan/sql/failure_order_table.dart';
-import 'package:scan/sql/order_table.dart';
 import 'package:scan/sql/sql_helper.dart';
 import 'package:scan/utils/NetWorkUtil.dart';
 import 'package:scan/utils/PageUtil.dart';
 import 'package:scan/utils/dialog_manager.dart';
+import 'package:scan/pages/no_send_order_helper.dart';
 
 class FailureOrderPage extends StatefulWidget {
   @override

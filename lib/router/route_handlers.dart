@@ -1,6 +1,5 @@
 import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
-import 'package:scan/pages/no_send_order_page.dart';
 import 'package:scan/pages/send_goods.dart';
 
 class RouteHandlers {

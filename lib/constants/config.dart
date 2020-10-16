@@ -10,7 +10,7 @@ import 'ienv.dart';
 class Config {
   static Env _env = Env.QA;
 
-  static String conStr = 'DEV';
+  static String conStr = 'QA';
 
   static IEnv getEnv() {
     switch (conStr) {
