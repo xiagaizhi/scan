@@ -367,7 +367,7 @@ class _Login extends State<Login> {
       'client': 'supplier-app', //登陆客户端
       'deviceName': DeviceUtils.androidDeviceInfo.model, //设备名称
       'deviceNo': DeviceUtils.androidDeviceInfo.androidId, //设备编号
-      'imei': ['1235648595262546'], //
+      'imei': [DeviceUtils.androidDeviceInfo.androidId], //
       'keyId': mSecret.keyId,
       'meid': DeviceUtils.androidDeviceInfo.androidId, //设备id
       'mobile': this._userNameController.text, //手机号码
