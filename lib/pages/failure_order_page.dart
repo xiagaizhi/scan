@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:scan/model/express_data_entity.dart';
 import 'package:scan/model/result_data.dart';
-import 'package:scan/pages/no_send_confirm.dart';
+import 'package:scan/pages/no_send_order_page.dart';
 import 'package:scan/sql/failure_order_table.dart';
 import 'package:scan/sql/order_table.dart';
 import 'package:scan/sql/sql_helper.dart';
@@ -101,7 +101,7 @@ class FailureOrderState extends State<FailureOrderPage> {
                       child: Text("确认提交"),
                     ),
                     onTap: () {
-                      _onConfirmClick();
+                      _onConfirmClick(context);
                     },
                   ),
                 ),
@@ -203,10 +203,10 @@ class FailureOrderState extends State<FailureOrderPage> {
     });
   }
 
-  _onConfirmClick() {
+  _onConfirmClick(parentContext) {
     print("确认提交");
     showDialog(
-        context: context,
+        context: parentContext,
         builder: (BuildContext context) {
           return AlertDialog(
             title: Text("提示"),
@@ -223,7 +223,7 @@ class FailureOrderState extends State<FailureOrderPage> {
               FlatButton(
                 onPressed: () {
                   Navigator.pop(context);
-                  postSendGoods(context);
+                  postSendGoods(parentContext);
                 },
                 textColor: Colors.red,
                 child: Text('确认'),
@@ -236,7 +236,9 @@ class FailureOrderState extends State<FailureOrderPage> {
   postSendGoods(context) async {
     List<dynamic> list = List();
     for (ExpressData expressData in expressList) {
-      list.add(expressData.id);
+      if (expressData.needDeliver == 1) {
+        list.add(expressData.id);
+      }
     }
     ResultData resultData = await NetWorkUtil.updateFailureOrder(list);
     FailureOrderTable table = FailureOrderTable();
@@ -245,7 +247,7 @@ class FailureOrderState extends State<FailureOrderPage> {
       setState(() {
         dataList = List();
       });
-    }else{
+    } else {
       DialogManger.getInstance().showNormalDialog(context, resultData.errorMsg);
     }
   }
@@ -284,8 +286,8 @@ class FailureOrderState extends State<FailureOrderPage> {
       item.needDeliver = 0;
     });
     FailureOrderTable table = FailureOrderTable();
-    await SqlHelper.update(table,
-        {"taskItemId": item.taskItemId, "needDeliver": item.needDeliver});
+    await SqlHelper.update(
+        table, {"orderId": item.taskItemId, "needDeliver": item.needDeliver});
   }
 }
 

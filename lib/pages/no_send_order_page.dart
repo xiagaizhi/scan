@@ -5,18 +5,20 @@ import 'package:scan/sql/order_table.dart';
 import 'package:scan/sql/sql_helper.dart';
 import 'package:scan/utils/NetWorkUtil.dart';
 import 'package:scan/utils/PageUtil.dart';
+import 'package:scan/utils/ToastUtils.dart';
+import 'package:scan/utils/dialog_manager.dart';
 import 'package:scan_plugin/call_back.dart';
 import 'package:scan_plugin/data/scan_result_data.dart';
 import 'package:scan_plugin/scan_plugin.dart';
 
-class NoSendConFirmPage extends StatefulWidget {
+class NoSendOrderPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return NoSendConfirmState();
+    return NoSendOrderState();
   }
 }
 
-class NoSendConfirmState extends State<NoSendConFirmPage> {
+class NoSendOrderState extends State<NoSendOrderPage> {
   List<CompanyData> dataList = List();
   List<OrderData> orderDataList = List();
 
@@ -92,6 +94,9 @@ class NoSendConfirmState extends State<NoSendConFirmPage> {
   Widget build(BuildContext context) {
     return SafeArea(
         child: Scaffold(
+      appBar: AppBar(
+        title: Text("不发货面单确认"),
+      ),
       body: Column(
         children: <Widget>[
           Flexible(
@@ -129,7 +134,7 @@ class NoSendConfirmState extends State<NoSendConFirmPage> {
                       child: Text("确认提交"),
                     ),
                     onTap: () {
-                      _onConfirmClick();
+                      _onConfirmClick(context);
                     },
                   ),
                 ),
@@ -142,7 +147,17 @@ class NoSendConfirmState extends State<NoSendConFirmPage> {
   }
 
   List<Widget> _buildListView() {
-    List<SliverList> slivers = List();
+    List<Widget> slivers = List();
+    Widget tip = SliverToBoxAdapter(
+      child: Container(
+        color: Colors.blueAccent,
+        alignment: Alignment.centerLeft,
+        padding: EdgeInsets.only(left: 20),
+        height: 40,
+        child: Text("以下面单是您标记为“不发货”的面单，请仔细核对！"),
+      ),
+    );
+    slivers.add(tip);
     for (int i = 0; i < dataList.length; i++) {
       CompanyData companyData = dataList[i];
       SliverList sliverList = SliverList(
@@ -327,7 +342,7 @@ class NoSendConfirmState extends State<NoSendConFirmPage> {
     });
   }
 
-  _onConfirmClick() async {
+  _onConfirmClick(parentContext) async {
     print("确认提交");
     showDialog(
         context: context,
@@ -347,7 +362,7 @@ class NoSendConfirmState extends State<NoSendConFirmPage> {
               FlatButton(
                 onPressed: () {
                   Navigator.pop(context);
-                  postSendGoods();
+                  postSendGoods(parentContext);
                 },
                 textColor: Colors.red,
                 child: Text('确认'),
@@ -357,15 +372,18 @@ class NoSendConfirmState extends State<NoSendConFirmPage> {
         });
   }
 
-  postSendGoods() async{
+  postSendGoods(context) async {
     OrderTable orderTable = OrderTable();
     List<Map<String, dynamic>> list = await SqlHelper.queryAll(orderTable);
     ResultData resultData = await NetWorkUtil.updateNoSendOrder(list);
     if (resultData.isSuccess()) {
+      ToastUtils.showToast_1("操作成功");
       SqlHelper.deleteAll(orderTable);
       setState(() {
         dataList = List();
       });
+    } else {
+      DialogManger.getInstance().showNormalDialog(context, resultData.errorMsg);
     }
   }
 }

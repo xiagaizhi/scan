@@ -12,6 +12,7 @@ import 'package:scan/router/Routes.dart';
 import 'package:scan/sql/failure_order_table.dart';
 import 'package:scan/sql/order_table.dart';
 import 'package:scan/sql/sql_helper.dart';
+import 'package:scan/utils/ToastUtils.dart';
 import 'package:scan_plugin/constants/string_constant.dart';
 import 'package:scan_plugin/data/scan_config_data.dart';
 import 'package:scan_plugin/data/scan_result_data.dart';
@@ -23,7 +24,7 @@ class PageUtil {
   static handleScanEvent(ScanResultData data) async {
     switch (data.pageType) {
       case StringConstant.PAGE_NO_SEND:
-        handleNoSendOrder();
+        handleNoSendOrder(data.data);
         break;
       case StringConstant.PAGE_FAILURE:
         handleFailureOrder();
@@ -33,19 +34,24 @@ class PageUtil {
     ScanPlugin.restartScan();
   }
 
-  static handleNoSendOrder() async {
+  static handleNoSendOrder(String expressId) async {
     ResultData resultData =
         await HttpManager.getInstance(type: UrlType.logistics).post(
             "/admin/print-task-item/get-base-order-by-express",
-            {"expressNo": "111114540522"});
+            {"expressNo": expressId});
     OrderTable orderTable = OrderTable();
     if (resultData.data == null) {
+      ToastUtils.showToast_1(resultData.errorMsg);
       return;
     }
-    for (Map<String, dynamic> map in resultData.data) {
-      OrderData orderData = OrderData();
-      orderData.fromJson(map);
-      await SqlHelper.insert(orderTable, orderData.toJson());
+    if (resultData.isSuccess()) {
+      for (Map<String, dynamic> map in resultData.data) {
+        OrderData orderData = OrderData();
+        orderData.fromJson(map);
+        await SqlHelper.insert(orderTable, orderData.toJson());
+      }
+    } else {
+      ToastUtils.showToast_1(resultData.errorMsg);
     }
   }
 
@@ -58,16 +64,21 @@ class PageUtil {
       "expressStatus": [0]
     });
     FailureOrderTable orderTable = FailureOrderTable();
+
     if (resultData.data == null) {
+      ToastUtils.showToast_1(resultData.errorMsg);
       return;
     }
-    for (Map<String, dynamic> map in resultData.data) {
-      ExpressData expressData = ExpressData();
-      expressData.fromJson(map);
-      expressData.needDeliver = 1;
-      await SqlHelper.insert(orderTable, expressData.toJson());
+    if (resultData.isSuccess()) {
+      for (Map<String, dynamic> map in resultData.data) {
+        ExpressData expressData = ExpressData();
+        expressData.fromJson(map);
+        expressData.needDeliver = 1;
+        await SqlHelper.insert(orderTable, expressData.toJson());
+      }
+    } else {
+      ToastUtils.showToast_1(resultData.errorMsg);
     }
-    print(await SqlHelper.queryAll(orderTable));
   }
 
   static Future scanNoSend(BuildContext context, bool newPage) async {
