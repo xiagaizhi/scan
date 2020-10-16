@@ -42,9 +42,7 @@ class _QRCodePageState extends State<QRCodePage> with ICallBack {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String userStr = prefs.get(ShareUtils.userInfo);
     if (userStr == null || userStr == '') {
-      Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-        return Login();
-      }));
+      NavigatorUtil.go(context, Routes.login,replace: true);
       return;
     }
     UserInfoEntity user = new UserInfoEntity();
@@ -67,9 +65,7 @@ class _QRCodePageState extends State<QRCodePage> with ICallBack {
 
     if (data.status != 'OK') {
       ToastUtils.showToast_1(data.errorMsg.toString());
-      Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-        return Login();
-      }));
+      NavigatorUtil.go(context, Routes.login,replace: true);
       return;
     }
     UserInfoEntity userbean = new UserInfoEntity();
@@ -153,11 +149,7 @@ class _QRCodePageState extends State<QRCodePage> with ICallBack {
             InkWell(
               onTap: () {
                 //跳转并关闭当前页面
-                Navigator.pushAndRemoveUntil(
-                  context,
-                  new MaterialPageRoute(builder: (context) => new Login()),
-                  (route) => route == null,
-                );
+                NavigatorUtil.go(context, Routes.login,replace: true);
               },
               child: Container(
                 alignment: Alignment.center,
