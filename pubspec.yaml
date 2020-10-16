@@ -33,7 +33,7 @@ dependencies:
   #轮播图 https://pub.dev/packages/flutter_swiper
   flutter_swiper: ^1.1.6
   #路由管理 https://pub.dev/packages/fluro
-  fluro: ^1.6.3
+  fluro: 1.6.3
   #loading https://pub.dev/packages/flutter_spinkit
   flutter_spinkit: ^4.1.2
   #toast https://pub.dev/packages/fluttertoast

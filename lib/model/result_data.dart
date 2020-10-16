@@ -1,7 +1,7 @@
 import 'package:scan/generated/json/base/json_convert_content.dart';
+import 'package:scan/network/network_ststus.dart';
 
 class ResultData with JsonConvert<ResultData> {
-  static final String ok = "OK";
   dynamic errorCode;
   dynamic errorMsg;
   dynamic data;
@@ -13,6 +13,7 @@ class ResultData with JsonConvert<ResultData> {
   }
 
   bool isSuccess() {
-    return this.status == ok;
+    return this.status == NetWorkStatus.OK;
   }
+
 }

@@ -1,43 +1,42 @@
-import 'package:scan/model/order_data.dart';
 import 'package:scan/sql/base_table.dart';
 
-class OrderTable extends BaseTable {
+class FailureOrderTable extends BaseTable {
   ///表名
-  final String name = 'OrderTable';
+  final String name = 'FailureOrderTable';
 
-  final String expressNo = "expressNo";
+  final String consignmentCompanyId = "consignmentCompanyId";
+  final String consignmentCompanyName = "consignmentCompanyName";
   final String createTime = "createTime";
+  final String expressNo = "expressNo";
   final String expressStatus = "expressStatus";
   final String id = "id";
-  final String needDeliver = "needDeliver";
   final String orderFlag = "orderFlag";
   final String orderId = "orderId";
   final String orderNumber = "orderNumber";
   final String status = "status";
   final String supplierId = "supplierId";
   final String supplierName = "supplierName";
-  final String taskId = "taskId";
-  final String taskItemId = "taskItemId";
-  final String columnId = "columnId";
+  final String rowId = "rowId";
+  final String needDeliver = "needDeliver";
 
   @override
   createTableString() {
     return '''
         create table $name (
-        $columnId integer primary key AUTOINCREMENT,
-        $id integer,
-        $expressNo text ,
+        $rowId integer primary key AUTOINCREMENT,
+        $consignmentCompanyId text,
+        $consignmentCompanyName text ,
         $createTime text ,
-        $expressStatus text ,
-        $needDeliver integer,
+        $expressNo text ,
+        $expressStatus text,
+        $id text ,
         $orderFlag text ,
         $orderId text ,
         $orderNumber text ,
         $status text ,
         $supplierId text ,
         $supplierName text ,
-        $taskId text ,
-        $taskItemId text
+        $needDeliver integer 
         )
       ''';
   }
@@ -49,6 +48,6 @@ class OrderTable extends BaseTable {
 
   @override
   String getPrimaryString() {
-    return taskItemId;
+    return orderId;
   }
 }

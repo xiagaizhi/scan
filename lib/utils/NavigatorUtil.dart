@@ -20,9 +20,9 @@ class NavigatorUtil {
     Application.router.navigateTo(context, Routes.main, replace: true);
   }
 
-  static void go(BuildContext context, String route) {
+  static void go(BuildContext context, String route, {bool replace = false}) {
     //replace 从栈中移除
-    Application.router.navigateTo(context, route, replace: false);
+    Application.router.navigateTo(context, route, replace: replace);
   }
 
   static void goPramPage(BuildContext context, String path, Object object) {
@@ -30,17 +30,6 @@ class NavigatorUtil {
     Application.router.navigateTo(context, path + "?data=$data");
   }
 
-  // static void goPramPage(BuildContext context, String name, int age,
-  //     double score, bool sex, Person person) {
-  //   String cnName = ConvertUtil.encode(name);
-  //   String personJson = ConvertUtil.object2string(person);
-  //   Application.router.navigateTo(
-  //       context,
-  //       Routes.demoParams +
-  //           "?name=$cnName&age=$age&score=$score&sex=$sex&personJson=$personJson");
-  // }
-
-  /// 跳转到 会返回参数的 页面
   static Future goReturnParamsPage(BuildContext context) {
     return Application.router.navigateTo(context, Routes.returnPrams);
   }

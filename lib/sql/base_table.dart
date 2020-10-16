@@ -9,6 +9,8 @@ abstract class BaseTable {
 
   tableName();
 
+  String getPrimaryString();
+
   tableBaseString(String sql) {
     return sql;
   }

@@ -193,7 +193,7 @@ class _QRCodePageState extends State<QRCodePage> with ICallBack {
                             ),
                           ),
                           onTap: () {
-                            scanNoSend(context);
+                            PageUtil.scanNoSend(context, true);
                           },
                         )
                       ],
@@ -216,7 +216,6 @@ class _QRCodePageState extends State<QRCodePage> with ICallBack {
                             child: Text(''),
                           ),
                         ),
-
                         Container(
                           width: 220,
                           child: Column(
@@ -257,7 +256,7 @@ class _QRCodePageState extends State<QRCodePage> with ICallBack {
                             ),
                           ),
                           onTap: () {
-                            scanSingleSend(context);
+                            PageUtil.scanSingleSend(context);
                           },
                         )
                       ],
@@ -320,7 +319,7 @@ class _QRCodePageState extends State<QRCodePage> with ICallBack {
                             ),
                           ),
                           onTap: () {
-                            scan(type: ScanType.ALL);
+                            PageUtil.scaFailureBarCode(context, true);
                           },
                         )
                       ],
@@ -333,86 +332,8 @@ class _QRCodePageState extends State<QRCodePage> with ICallBack {
         ));
   }
 
-  Future scanNoSend(BuildContext context) async {
-    ScanResultData data;
-    ScanConfigData config = ScanConfigData(
-        isSplashOn: true,
-        isContinuous: true,
-        isNeedButton: true,
-        buttonString: "扫码完毕",
-        tipString: "提示",
-        toastString: "扫码成功",
-        formatType: -1);
-    try {
-      print(config);
-      print(json.encode(config));
-      data = await ScanPlugin.startScan(config);
-    } on PlatformException {
-      print("Failed to get platform version.");
-    }
-    if (!mounted) return;
-    NavigatorUtil.go(context, Routes.noSendConfirm);
-  }
-
-  Future scanSingleSend(BuildContext context) async {
-    ScanResultData data;
-    ScanConfigData config = ScanConfigData(
-        isSplashOn: true,
-        isContinuous: false,
-        isNeedButton: false,
-        buttonString: "扫码完毕",
-        tipString: "提示",
-        toastString: "扫码成功",
-        formatType: -1);
-    try {
-      print(config);
-      print(json.encode(config));
-      data = await ScanPlugin.startScan(config);
-    } on PlatformException {
-      print("Failed to get platform version.");
-    }
-    if (!mounted) return;
-    NavigatorUtil.goPramPage(context, Routes.sendGoods, data);
-  }
-
-  Future scan({ScanType type = ScanType.QR}) async {
-    ScanResultData data;
-    ScanConfigData config = ScanConfigData(
-        isSplashOn: true,
-        isContinuous: true,
-        isNeedButton: true,
-        buttonString: "扫码完毕",
-        tipString: "提示",
-        toastString: "扫码成功",
-        formatType: getQrFormat(type));
-    try {
-      print(config);
-      print(json.encode(config));
-      data = await ScanPlugin.startScan(config);
-    } on PlatformException {
-      print("Failed to get platform version.");
-    }
-    if (!mounted) return;
-
-    setState(() {});
-  }
-
-  int getQrFormat(ScanType type) {
-    switch (type) {
-      case ScanType.QR:
-        return 1;
-      case ScanType.OTHER:
-        return -1;
-      case ScanType.ALL:
-        return 0;
-    }
-    return 0;
-  }
-
   @override
   void callBack(ScanResultData data) {
-    PageUtil.handleScanEvent(data.data);
+    PageUtil.handleScanEvent(data);
   }
 }
-
-enum ScanType { QR, OTHER, ALL }

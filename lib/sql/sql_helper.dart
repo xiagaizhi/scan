@@ -5,7 +5,7 @@ class SqlHelper {
     var db = await table.getDataBase();
     var name = table.tableName();
     List<Map<String, dynamic>> list =
-        await query(table, map["taskItemId"].toString());
+        await query(table, map["${table.getPrimaryString()}"].toString());
     if (list.length != 0) {
       print("---------------------重复添加----------------------");
       return -1;
@@ -17,7 +17,8 @@ class SqlHelper {
       BaseTable table, String taskItemId) async {
     var db = await table.getDataBase();
     var name = table.tableName();
-    return await db.query(name, where: "taskItemId = ?", whereArgs: [taskItemId]);
+    return await db.query(name,
+        where: "${table.getPrimaryString()} = ?", whereArgs: [taskItemId]);
   }
 
   static Future<List<Map<String, dynamic>>> queryAll(BaseTable table) async {
@@ -30,7 +31,8 @@ class SqlHelper {
     var db = await table.getDataBase();
     var name = table.tableName();
     return await db.update(name, map,
-        where: "taskItemId=?", whereArgs: [map["taskItemId"]]);
+        where: "${table.getPrimaryString()}=?",
+        whereArgs: [map["${table.getPrimaryString()}"]]);
   }
 
   static Future<int> delete(BaseTable table, int id) async {

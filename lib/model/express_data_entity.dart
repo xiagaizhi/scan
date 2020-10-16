@@ -4,7 +4,7 @@ class ExpressData with JsonConvert<ExpressData> {
 	String id;
 	String supplierId;
 	String supplierName;
-	int consignmentCompanyId;
+	String consignmentCompanyId;
 	String consignmentCompanyName;
 	String orderId;
 	String orderNumber;
@@ -13,4 +13,5 @@ class ExpressData with JsonConvert<ExpressData> {
 	String status;
 	String expressStatus;
 	String createTime;
+	dynamic needDeliver;
 }
