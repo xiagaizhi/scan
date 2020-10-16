@@ -1,15 +1,12 @@
 import 'dart:async';
-
-import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:scan/constants/ienv.dart';
 import 'package:scan/model/code_entity.dart';
 import 'package:scan/model/result_data.dart';
-import 'package:scan/model/result_data.dart';
 import 'package:scan/network/network_manager.dart';
-import 'package:scan/pages/qr_scan_code.dart';
+import 'package:scan/router/Routes.dart';
 import 'package:scan/utils/DeviceUtils.dart';
 import 'dart:convert';
 import 'dart:typed_data';
@@ -19,6 +16,7 @@ import 'package:scan/utils/RSAUtils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:scan/utils/ShareUtils.dart';
 import 'package:scan/model/user_info_entity.dart';
+import 'package:scan/utils/NavigatorUtil.dart';
 
 /// 不发货面单结果
 
@@ -388,12 +386,8 @@ class _Login extends State<Login> {
     prefs.setString(ShareUtils.token, user.token);
     prefs.setString(ShareUtils.userInfo, jsonEncode(data.data));
 
-    //跳转并关闭当前页面
-    Navigator.pushAndRemoveUntil(
-      context,
-      new MaterialPageRoute(builder: (context) => new QRCodePage()),
-          (route) => route == null,
-    );
+
+    NavigatorUtil.go(context, Routes.root,replace: true);
   }
 
   //验证码登陆
@@ -425,11 +419,7 @@ class _Login extends State<Login> {
     prefs.setString(ShareUtils.userInfo, jsonEncode(data.data));
 
     //跳转并关闭当前页面
-    Navigator.pushAndRemoveUntil(
-      context,
-      new MaterialPageRoute(builder: (context) => new QRCodePage()),
-          (route) => route == null,
-    );
+    NavigatorUtil.go(context, Routes.root,replace: true);
   }
 
   @override

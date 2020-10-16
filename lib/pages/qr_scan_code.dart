@@ -1,6 +1,8 @@
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:scan/constants/config.dart';
 import 'package:scan/constants/ienv.dart';
 import 'package:scan/model/result_data.dart';
 import 'package:scan/network/network_manager.dart';
@@ -40,9 +42,7 @@ class _QRCodePageState extends State<QRCodePage> with ICallBack {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String userStr = prefs.get(ShareUtils.userInfo);
     if (userStr == null || userStr == '') {
-      Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-        return Login();
-      }));
+      NavigatorUtil.go(context, Routes.login,replace: true);
       return;
     }
     UserInfoEntity user = new UserInfoEntity();
@@ -65,9 +65,7 @@ class _QRCodePageState extends State<QRCodePage> with ICallBack {
 
     if (data.status != 'OK') {
       ToastUtils.showToast_1(data.errorMsg.toString());
-      Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-        return Login();
-      }));
+      NavigatorUtil.go(context, Routes.login,replace: true);
       return;
     }
     UserInfoEntity userbean = new UserInfoEntity();
@@ -86,9 +84,51 @@ class _QRCodePageState extends State<QRCodePage> with ICallBack {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: new Text(
-            '电子面单扫描',
-            style: TextStyle(fontSize: 18),
+          title: InkWell(
+            child: new Text(
+              '电子面单扫描',
+              style: TextStyle(fontSize: 18),
+            ),
+            onTap: () {
+              showCupertinoDialog(
+                  context: context,
+                  builder: (context) {
+                    return CupertinoAlertDialog(
+                      title: Text(''),
+                      content: Text('确定切换访问地址'),
+                      actions: <Widget>[
+                        CupertinoDialogAction(
+                          child: Text('dev'),
+                          onPressed: () {
+                            Navigator.of(context).pop('ok');
+                            Config.conStr = 'DEV';
+                          },
+                        ),
+                        CupertinoDialogAction(
+                          child: Text('qa'),
+                          onPressed: () {
+                            Navigator.of(context).pop('ok');
+                            Config.conStr = 'QA';
+                          },
+                        ),
+                        CupertinoDialogAction(
+                          child: Text('pre'),
+                          onPressed: () {
+                            Navigator.of(context).pop('ok');
+                            Config.conStr = 'PRE';
+                          },
+                        ),
+                        CupertinoDialogAction(
+                          child: Text('prod'),
+                          onPressed: () {
+                            Navigator.of(context).pop('ok');
+                            Config.conStr = 'PROD';
+                          },
+                        ),
+                      ],
+                    );
+                  });
+            },
           ),
           leading: InkWell(
             onTap: () {
@@ -109,11 +149,7 @@ class _QRCodePageState extends State<QRCodePage> with ICallBack {
             InkWell(
               onTap: () {
                 //跳转并关闭当前页面
-                Navigator.pushAndRemoveUntil(
-                  context,
-                  new MaterialPageRoute(builder: (context) => new Login()),
-                  (route) => route == null,
-                );
+                NavigatorUtil.go(context, Routes.login,replace: true);
               },
               child: Container(
                 alignment: Alignment.center,

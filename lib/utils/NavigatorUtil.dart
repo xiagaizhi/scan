@@ -15,10 +15,6 @@ class NavigatorUtil {
     Navigator.pop(context, result);
   }
 
-  static void goHomePage(BuildContext context) {
-    //replace 从栈中移除
-    Application.router.navigateTo(context, Routes.main, replace: true);
-  }
 
   static void go(BuildContext context, String route, {bool replace = false}) {
     //replace 从栈中移除
@@ -30,15 +26,5 @@ class NavigatorUtil {
     Application.router.navigateTo(context, path + "?data=$data");
   }
 
-  static Future goReturnParamsPage(BuildContext context) {
-    return Application.router.navigateTo(context, Routes.returnPrams);
-  }
 
-  static Future gotransitionDemoPage(BuildContext context, String title) {
-    return Application.router
-        .navigateTo(context, Routes.transitionDemo + "?title=$title",
-
-            /// 指定了 转场动画 inFromLeft
-            transition: TransitionType.inFromLeft);
-  }
 }
