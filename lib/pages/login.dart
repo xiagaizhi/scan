@@ -88,7 +88,7 @@ class _Login extends State<Login> {
   @override
   void initState() {
     // TODO: implement initState
-//    clean();
+    clean();
     getSecretKey();
 
     //设置焦点监听
@@ -121,7 +121,9 @@ class _Login extends State<Login> {
     _imgCodealue.dispose();
     _passwordController.dispose();
     _phoneCodeController.dispose();
-    t.cancel(); //清除定时器
+    if(t!=null){
+      t.cancel(); //清除定时器
+    }
     super.dispose();
   }
 
@@ -192,7 +194,8 @@ class _Login extends State<Login> {
       var bytes =
           imgCode.value.split(',')[1]; //'iVBORw0KGgoAAAANSUhEUg.....' 正确格式
       imgBytes = Base64Decoder().convert(bytes);
-
+      _phoneCodeController.clear();
+      _imgCodealue.clear();
       showCupertinoDialog(
           context: context,
           builder: (context) {
@@ -291,6 +294,10 @@ class _Login extends State<Login> {
                     CupertinoDialogAction(
                       child: Text('确认'),
                       onPressed: () {
+                        if(_imgCodealue.text.length!=4){
+                          ToastUtils.showToast_1('请输入图片验证码');
+                          return;
+                        }
                         Navigator.of(context).pop('ok');
                         if (_isCode) {
                           getCode();
@@ -427,39 +434,6 @@ class _Login extends State<Login> {
 
   @override
   Widget build(BuildContext context) {
-//    Uint8List bytes = BASE64.decode(imgCode.value);
-    /// logo 图片区域
-    Widget logoImageArea = new Container(
-      alignment: Alignment.topCenter,
-      // 设置图片为圆形
-      child: ClipOval(
-//        child: Image.asset(
-//          "images/logo.png",
-//          height: 100,
-//          width: 100,
-//          fit: BoxFit.cover,
-//        ),
-          child: Image.network(
-        'http://pic1.win4000.com/pic/c/cf/cdc983699c.jpg',
-        height: 100,
-        width: 100,
-        fit: BoxFit.cover,
-      )),
-    );
-
-    /// logo名称
-    Widget logoName = new Container(
-        margin: EdgeInsets.only(top: 10),
-        height: 20.0,
-        child: Text(
-          "阳光校园商家端",
-          textAlign: TextAlign.center,
-          style: TextStyle(
-              fontSize: 18.0, // 文字大小
-              color: Colors.grey, // 文字颜色
-              fontWeight: FontWeight.w700),
-        ));
-
     ///密码登陆  验证码登陆
     Widget bottomArea = new Container(
       margin: EdgeInsets.only(right: 70, left: 80),
@@ -482,7 +456,6 @@ class _Login extends State<Login> {
               });
             },
           ),
-
           ///垂直分割线
           SizedBox(
             width: 1,
@@ -598,7 +571,7 @@ class _Login extends State<Login> {
                               ),
                               onPressed: () {
                                 if (this._userNameController.text == null ||
-                                    this._userNameController.text == '') {
+                                    this._userNameController.text.length != 11) {
                                   ToastUtils.showToast_1("请先输入手机号码");
                                   return;
                                 }
@@ -698,25 +671,35 @@ class _Login extends State<Login> {
           _focusNodeUserName.unfocus();
           _focusNodeCode.unfocus();
         },
-        child: new ListView(
-          children: <Widget>[
-            new SizedBox(
-              height: 80,
+        child:Container(
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage("assets/images/bg_logo.png"),
+              fit: BoxFit.cover,
             ),
-            logoImageArea,
-            logoName,
+          ),
+          child: new ListView(
+            children: <Widget>[
+              new SizedBox(
+                height: 220,
+              ),
+//              logoImageArea,
+//              logoName,
 
 //            bottomArea,
-            new SizedBox(
-              height: 20,
-            ),
-            inputTextArea,
-            new SizedBox(
-              height: 30,
-            ),
-            loginButtonArea,
-          ],
-        ),
+              new SizedBox(
+                height: 20,
+              ),
+              inputTextArea,
+              new SizedBox(
+                height: 30,
+              ),
+              loginButtonArea,
+            ],
+          ),
+        )
+
+
       ),
     );
   }

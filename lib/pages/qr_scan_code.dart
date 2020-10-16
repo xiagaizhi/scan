@@ -71,6 +71,9 @@ class _QRCodePageState extends State<QRCodePage> with ICallBack {
 
     if (data.status != 'OK') {
       ToastUtils.showToast_1(data.errorMsg.toString());
+      Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+        return Login();
+      }));
       return;
     }
     UserInfoEntity userbean = new UserInfoEntity();
@@ -89,31 +92,44 @@ class _QRCodePageState extends State<QRCodePage> with ICallBack {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: new Text('电子面单扫描'),
-        leading: IconButton(
-          icon: new Icon(Icons.aspect_ratio),
-          onPressed: () {
+        title: new Text('电子面单扫描',style: TextStyle(
+          fontSize: 18
+        ),),
+        leading: InkWell(
+          onTap: () {
             NavigatorUtil.go(context, Routes.noSendConfirm);
           },
+          child: Container(
+            alignment: Alignment.center,
+            child: Image(
+              width: 24,
+              height: 24,
+              image: AssetImage("assets/images/scan.png"),
+            ),
+          ),
         ),
         backgroundColor: Colors.blue,
         centerTitle: true,
         actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.table_chart),
-            tooltip: "Scan",
-            onPressed: () {
-//              Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-//                return Login();
-//              }));
+          InkWell(
+            onTap: () {
               //跳转并关闭当前页面
               Navigator.pushAndRemoveUntil(
                 context,
                 new MaterialPageRoute(builder: (context) => new Login()),
-                    (route) => route == null,
+                (route) => route == null,
               );
             },
-          )
+            child: Container(
+              alignment: Alignment.center,
+              margin: EdgeInsets.only(right: 16),
+              child: Image(
+                width: 24,
+                height: 24,
+                image: AssetImage("assets/images/exit.png"),
+              ),
+            ),
+          ),
         ],
       ),
       body: Center(
@@ -174,8 +190,6 @@ class _QRCodePageState extends State<QRCodePage> with ICallBack {
                     ],
                   ),
                 )),
-            Text("提示：如需扫描商家端后台的各类信息修改二维码，请使用左上角的扫一扫即可。"),
-            Text(title)
           ],
         ),
       ),
