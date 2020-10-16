@@ -42,87 +42,88 @@ class SendGoodsState extends State<SendGoodsPage> {
         title: new Text('订单详情信息'),
         centerTitle: true,
       ),
-      body: mOrderDetailData==null||mOrderDetailData.id==null?empty:
-      Column(
-        children: <Widget>[
-          Flexible(
-              fit: FlexFit.tight,
-              child: Container(
-                padding:
-              EdgeInsets.only(left: 16.0, top: 8.0, right: 16.0, bottom: 6.0),
-                child: Column(
-                  children: <Widget>[
-                    new SizedBox(
-                      height: 10,
-                    ),
-                    _buildCompany(),
-                    new SizedBox(
-                      height: 10,
-                    ),
-                    Divider(height: 1),
-                    new SizedBox(
-                      height: 10,
-                    ),
-                    _buildAddress(),
-                    _buildList(),
-                  ],
-                )
-              ),
-          ),
-
-          Container(
-            height: 60,
-            width: double.infinity,
-            color: Colors.white,
-            child: Row(
+      body: mOrderDetailData == null || mOrderDetailData.id == null
+          ? empty
+          : Column(
               children: <Widget>[
-                Container(
-                  width:150,
-                  height: 44,
-                  color: Color.fromRGBO(151, 197, 245, 1),
-                  alignment: Alignment.center,
-                  margin: EdgeInsets.only(left: 20),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: GestureDetector(
-                      child: Container(
-                        alignment: Alignment.center,
-                        child: Text("重新扫码"),
-                      ),
-                      onTap: () {
-                        PageUtil.scanSingleSend(context);
-                      },
-                    ),
-                  ),
-                ),
                 Flexible(
-                  child: SizedBox(),
                   fit: FlexFit.tight,
+                  child: Container(
+                      padding: EdgeInsets.only(
+                          left: 16.0, top: 8.0, right: 16.0, bottom: 6.0),
+                      child: Column(
+                        children: <Widget>[
+                          new SizedBox(
+                            height: 10,
+                          ),
+                          _buildCompany(),
+                          new SizedBox(
+                            height: 10,
+                          ),
+                          Divider(height: 1),
+                          new SizedBox(
+                            height: 10,
+                          ),
+                          _buildAddress(),
+                          _buildList(),
+                        ],
+                      )),
                 ),
                 Container(
-                  width:150,
-                  height: 44,
-                  color: Color.fromRGBO(37, 135, 235, 1),
-                  margin: EdgeInsets.only(right: 20),
-                  child:  Align(
-                    alignment: Alignment.centerRight,
-                    child: GestureDetector(
-                      child: Container(
+                  height: 60,
+                  width: double.infinity,
+                  color: Colors.white,
+                  child: Row(
+                    children: <Widget>[
+                      Container(
+                        width: 165,
+                        height: 44,
+                        color: Color.fromRGBO(151, 197, 245, 1),
                         alignment: Alignment.center,
-                        child: Text("确认发货"),
+                        margin: EdgeInsets.only(left: 10),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: GestureDetector(
+                            child: Container(
+                              alignment: Alignment.center,
+                              child: Text("重新扫码",style: TextStyle(color: Colors.white,fontSize: 14),),
+                            ),
+                            onTap: () {
+                              PageUtil.scanSingleSend(context);
+                            },
+                          ),
+                        ),
                       ),
-                      onTap: () {
-                        sendDevices();
-                      },
-                    ),
+                      Flexible(
+                        child: SizedBox(),
+                        fit: FlexFit.tight,
+                      ),
+                      Container(
+                        width: 165,
+                        height: 44,
+                        color: Color.fromRGBO(37, 135, 235, 1),
+                        margin: EdgeInsets.only(right: 10),
+                        child: Align(
+                          alignment: Alignment.centerRight,
+                          child: GestureDetector(
+                            child: Container(
+                              alignment: Alignment.center,
+                              child: Text(
+                                "确认发货",
+                                style: TextStyle(color: Colors.white,fontSize: 14),
+                              ),
+                            ),
+                            onTap: () {
+                              sendDevices();
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-
+                )
               ],
             ),
-          )
-        ],
-      ),
     );
   }
 
