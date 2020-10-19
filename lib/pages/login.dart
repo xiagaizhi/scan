@@ -54,7 +54,7 @@ class _Login extends State<Login> {
   var _isLoginWay = true; //判断是 密码登陆还是验证码登陆
   var _isCode = true; //判断是否显示倒计时
   var _codeText = "获取验证码";
-  int _codeNumber = 10;
+  int _codeNumber = 60;
   Timer t;
   //倒计时
   _showTimer() {
@@ -68,7 +68,7 @@ class _Login extends State<Login> {
         t.cancel(); //清除定时器
         setState(() {
           this._isCode = true;
-          this._codeNumber = 10;
+          this._codeNumber = 60;
           this._codeText = "重新发送验证码";
         });
       }
