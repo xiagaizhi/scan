@@ -18,7 +18,7 @@ class NoSendOrderData with _NoSendMoreBloc {
         for (BatchData batchData in company.batchList) {
           if (batchData.batchNumber == data.taskId) {
             GoodsData goodsData =
-                GoodsData(data.taskItemId, data.taskItemId, data.needDeliver);
+                GoodsData(data.expressNo, data.taskItemId, data.needDeliver);
             batchData.goodsList.add(goodsData);
             onDataChanged(this);
             return;
@@ -28,7 +28,7 @@ class NoSendOrderData with _NoSendMoreBloc {
         batchData.batchNumber = data.taskId;
         List<GoodsData> goodsList = List();
         GoodsData goodsData =
-            GoodsData(data.taskItemId, data.taskItemId, data.needDeliver);
+            GoodsData(data.expressNo, data.taskItemId, data.needDeliver);
         goodsList.add(goodsData);
         batchData.goodsList = goodsList;
         company.batchList.add(batchData);
@@ -44,7 +44,7 @@ class NoSendOrderData with _NoSendMoreBloc {
     batchData.batchNumber = data.taskId;
     List<GoodsData> goodsList = List();
     GoodsData goodsData =
-        GoodsData(data.taskItemId, data.taskItemId, data.needDeliver);
+        GoodsData(data.expressNo, data.taskItemId, data.needDeliver);
     goodsList.add(goodsData);
     batchData.goodsList = goodsList;
     batchList.add(batchData);

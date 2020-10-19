@@ -16,10 +16,11 @@ class OrderData with JsonConvert<OrderData> {
   dynamic supplierName;
   dynamic taskId;
   dynamic taskItemId;
+  dynamic orderStatus;
 
   @override
   String toString() {
-    return 'OrderData{expressNo: $expressNo, createTime: $createTime, expressStatus: $expressStatus, id: $id, needDeliver: $needDeliver, orderFlag: $orderFlag, orderId: $orderId, orderNumber: $orderNumber, status: $status, supplierId: $supplierId, supplierName: $supplierName, taskId: $taskId, taskItemId: $taskItemId}';
+    return 'OrderData{expressNo: $expressNo, createTime: $createTime, expressStatus: $expressStatus, id: $id, needDeliver: $needDeliver, orderFlag: $orderFlag, orderId: $orderId, orderNumber: $orderNumber, status: $status, supplierId: $supplierId, supplierName: $supplierName, taskId: $taskId, taskItemId: $taskItemId, orderStatus: $orderStatus}';
   }
 
   Map<String, dynamic> toStringMap() {
@@ -39,6 +40,7 @@ class OrderData with JsonConvert<OrderData> {
     data['supplierName'] = this.supplierName.toString();
     data['taskId'] = this.taskId.toString();
     data['taskItemId'] = this.taskItemId.toString();
+    data['orderStatus'] = this.orderStatus.toString();
     return data;
   }
 
@@ -81,6 +83,9 @@ class OrderData with JsonConvert<OrderData> {
     }
     if (json['taskItemId'] != null) {
       this.taskItemId = json['taskItemId'];
+    }
+    if (json['orderStatus'] != null) {
+      this.orderStatus = json['orderStatus'];
     }
     return this;
   }

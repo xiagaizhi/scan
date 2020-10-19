@@ -21,9 +21,9 @@ class NavigatorUtil {
     Application.router.navigateTo(context, route, replace: replace);
   }
 
-  static void goPramPage(BuildContext context, String path, Object object) {
+  static void goPramPage(BuildContext context, String path, Object object,{bool replace = false}) {
     String data = ConvertUtil.object2string(object);
-    Application.router.navigateTo(context, path + "?data=$data");
+    Application.router.navigateTo(context, path + "?data=$data",replace: replace);
   }
 
 

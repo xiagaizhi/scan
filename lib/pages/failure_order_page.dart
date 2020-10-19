@@ -196,7 +196,7 @@ class FailureOrderState extends State<FailureOrderPage> {
 
   _onReStartScanClick(BuildContext context) async {
     print("继续扫码");
-    await PageUtil.scanNoSend(context, false);
+    await PageUtil.scaFailureBarCode(context, true);
     setState(() {
       initData();
     });

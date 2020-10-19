@@ -19,6 +19,7 @@ class OrderTable extends BaseTable {
   final String taskId = "taskId";
   final String taskItemId = "taskItemId";
   final String columnId = "columnId";
+  final String orderStatus = "orderStatus";
 
   @override
   createTableString() {
@@ -37,7 +38,8 @@ class OrderTable extends BaseTable {
         $supplierId text ,
         $supplierName text ,
         $taskId text ,
-        $taskItemId text
+        $taskItemId text ,
+        $orderStatus text
         )
       ''';
   }

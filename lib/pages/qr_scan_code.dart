@@ -138,7 +138,7 @@ class _QRCodePageState extends State<QRCodePage> with ICallBack {
           ),
           leading: InkWell(
             onTap: () {
-              PageUtil.scanQrCode(context, true);
+              PageUtil.scanQrCode(context, false);
             },
             child: Container(
               alignment: Alignment.center,
@@ -229,7 +229,7 @@ class _QRCodePageState extends State<QRCodePage> with ICallBack {
                             ),
                           ),
                           onTap: () {
-                            PageUtil.scanNoSend(context, true);
+                            PageUtil.scanNoSend(context, false);
                           },
                         )
                       ],
@@ -292,7 +292,7 @@ class _QRCodePageState extends State<QRCodePage> with ICallBack {
                             ),
                           ),
                           onTap: () {
-                            PageUtil.scanSingleSend(context);
+                            PageUtil.scanSingleSend(context,false);
                           },
                         )
                       ],
@@ -355,7 +355,7 @@ class _QRCodePageState extends State<QRCodePage> with ICallBack {
                             ),
                           ),
                           onTap: () {
-                            PageUtil.scaFailureBarCode(context, true);
+                            PageUtil.scaFailureBarCode(context, false);
                           },
                         )
                       ],

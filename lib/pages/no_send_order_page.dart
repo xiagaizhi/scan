@@ -210,7 +210,7 @@ class NoSendOrderState extends State<NoSendOrderPage> {
 
   _onReStartScanClick(BuildContext context) {
     print("继续扫码");
-    PageUtil.scanNoSend(context, false);
+    PageUtil.scanNoSend(context, true);
   }
 
   _onConfirmClick(parentContext) {

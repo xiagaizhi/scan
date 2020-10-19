@@ -212,7 +212,7 @@ class EditNoSendState extends State<EditNoSendPage> {
   }
 
   _onReStartScanClick(BuildContext context) {
-    PageUtil.scanNoSend(context, false);
+    PageUtil.scanEditNoSend(context);
   }
 
   _onConfirmClick(parentContext) {

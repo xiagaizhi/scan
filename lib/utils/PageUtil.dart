@@ -76,7 +76,7 @@ class PageUtil {
     }
   }
 
-  static Future scanNoSend(BuildContext context, bool newPage) async {
+  static Future scanNoSend(BuildContext context, bool replace) async {
     ScanResultData data;
     ScanConfigData config = ScanConfigData(
         isSplashOn: true,
@@ -88,14 +88,12 @@ class PageUtil {
         pageType: StringConstant.PAGE_NO_SEND,
         formatType: -1);
     data = await ScanPlugin.startScan(config);
-    if (newPage && data.backButtonType == StringConstant.BACK_TYPE_BUTTON) {
-      NavigatorUtil.go(context, Routes.noSendConfirm);
-    } else if (data.backButtonType == StringConstant.BACK_TYPE_BUTTON) {
-      NavigatorUtil.go(context, Routes.noSendConfirm, replace: true);
+    if (data.backButtonType == StringConstant.BACK_TYPE_BUTTON) {
+      NavigatorUtil.go(context, Routes.noSendConfirm, replace: replace);
     }
   }
 
-  static Future scaFailureBarCode(BuildContext context, bool newPage) async {
+  static Future scaFailureBarCode(BuildContext context, bool replace) async {
     ScanResultData data;
     ScanConfigData config = ScanConfigData(
         isSplashOn: true,
@@ -107,12 +105,12 @@ class PageUtil {
         pageType: StringConstant.PAGE_FAILURE,
         formatType: -1);
     data = await ScanPlugin.startScan(config);
-    if (newPage && data.backButtonType == StringConstant.BACK_TYPE_BUTTON) {
-      NavigatorUtil.go(context, Routes.failureOrder);
+    if (data.backButtonType == StringConstant.BACK_TYPE_BUTTON) {
+      NavigatorUtil.go(context, Routes.failureOrder, replace: replace);
     }
   }
 
-  static Future scanSingleSend(BuildContext context) async {
+  static Future scanSingleSend(BuildContext context, bool replace) async {
     ScanResultData data;
     ScanConfigData config = ScanConfigData(
         isSplashOn: true,
@@ -125,11 +123,12 @@ class PageUtil {
         formatType: -1);
     data = await ScanPlugin.startScan(config);
     if (data.backButtonType == StringConstant.BACK_TYPE_BUTTON) {
-      NavigatorUtil.goPramPage(context, Routes.sendGoods, data);
+      NavigatorUtil.goPramPage(context, Routes.sendGoods, data,
+          replace: replace);
     }
   }
 
-  static Future scanQrCode(BuildContext context, bool newPage) async {
+  static Future scanQrCode(BuildContext context, bool replace) async {
     ScanResultData data;
     ScanConfigData config = ScanConfigData(
         isSplashOn: true,
@@ -141,8 +140,9 @@ class PageUtil {
         pageType: StringConstant.PAGE_NORMAL,
         formatType: 1);
     data = await ScanPlugin.startScan(config);
-    if (newPage && data.backButtonType == StringConstant.BACK_TYPE_BUTTON) {
-      NavigatorUtil.goPramPage(context, Routes.editNoSendOrder, data);
+    if (data.backButtonType == StringConstant.BACK_TYPE_BUTTON) {
+      NavigatorUtil.goPramPage(context, Routes.editNoSendOrder, data,
+          replace: replace);
     }
   }
 

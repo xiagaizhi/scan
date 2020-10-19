@@ -89,7 +89,7 @@ class SendGoodsState extends State<SendGoodsPage> {
                               child: Text("重新扫码",style: TextStyle(color: Colors.white,fontSize: 14),),
                             ),
                             onTap: () {
-                              PageUtil.scanSingleSend(context);
+                              PageUtil.scanSingleSend(context,true);
                             },
                           ),
                         ),
@@ -518,7 +518,7 @@ class SendGoodsState extends State<SendGoodsPage> {
               CupertinoDialogAction(
                 child: Text('继续发货'),
                 onPressed: () {
-                  PageUtil.scanSingleSend(context);
+                  PageUtil.scanSingleSend(context,true);
                 },
               ),
               CupertinoDialogAction(
