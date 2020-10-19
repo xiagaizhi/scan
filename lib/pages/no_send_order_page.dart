@@ -17,6 +17,7 @@ class NoSendOrderState extends State<NoSendOrderPage> {
   void initState() {
     super.initState();
     _helper.initData();
+    print("initState(");
   }
 
   @override

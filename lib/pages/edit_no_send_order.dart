@@ -1,9 +1,18 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:scan/model/web_qr_code_data.dart';
 import 'package:scan/pages/edit_no_send_helper.dart';
+import 'package:scan/utils/ConvertUtil.dart';
 import 'package:scan/utils/PageUtil.dart';
 import 'package:scan/utils/dialog_manager.dart';
+import 'package:scan_plugin/data/scan_result_data.dart';
 
 class EditNoSendPage extends StatefulWidget {
+  final String scanResult;
+
+  const EditNoSendPage({Key key, this.scanResult}) : super(key: key);
+
   @override
   State<StatefulWidget> createState() {
     return EditNoSendState();
@@ -12,11 +21,16 @@ class EditNoSendPage extends StatefulWidget {
 
 class EditNoSendState extends State<EditNoSendPage> {
   EditNoSendOrderData _helper = EditNoSendOrderData();
+  ScanResultData _scanResultData = ScanResultData();
 
   @override
   void initState() {
     super.initState();
-    _helper.initData();
+    _scanResultData.fromJson(ConvertUtil.decode(widget.scanResult));
+    WebQrCodeData webQrCodeData = WebQrCodeData();
+    print(_scanResultData.data is String);
+    webQrCodeData.fromJson(jsonDecode(_scanResultData.data));
+    _helper.initData(webQrCodeData);
   }
 
   @override
@@ -27,66 +41,63 @@ class EditNoSendState extends State<EditNoSendPage> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: _onWillPop,
-      child: SafeArea(
-          child: Scaffold(
-        appBar: AppBar(
-          title: Text("修改不发货面单"),
-        ),
-        body: Column(
-          children: <Widget>[
-            Flexible(
-                fit: FlexFit.tight,
-                child: StreamBuilder(
-                    stream: _helper.dataStream,
-                    initialData: _helper,
-                    builder: (data, stream) {
-                      return CustomScrollView(
-                        slivers: _buildListView(context, _helper),
-                      );
-                    })),
-            Container(
-              height: 64,
-              width: double.infinity,
-              color: Colors.blue,
-              child: Row(
-                children: <Widget>[
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: GestureDetector(
-                      child: Container(
-                        padding: EdgeInsets.only(left: 30),
-                        child: Text("添加面单"),
-                      ),
-                      onTap: () {
-                        _onReStartScanClick(context);
-                      },
+    return SafeArea(
+        child: Scaffold(
+      appBar: AppBar(
+        title: Text("修改不发货面单"),
+      ),
+      body: Column(
+        children: <Widget>[
+          Flexible(
+              fit: FlexFit.tight,
+              child: StreamBuilder(
+                  stream: _helper.dataStream,
+                  initialData: _helper,
+                  builder: (data, stream) {
+                    return CustomScrollView(
+                      slivers: _buildListView(context, _helper),
+                    );
+                  })),
+          Container(
+            height: 64,
+            width: double.infinity,
+            color: Colors.blue,
+            child: Row(
+              children: <Widget>[
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: GestureDetector(
+                    child: Container(
+                      padding: EdgeInsets.only(left: 30),
+                      child: Text("添加面单"),
                     ),
+                    onTap: () {
+                      _onReStartScanClick(context);
+                    },
                   ),
-                  Flexible(
-                    child: SizedBox(),
-                    fit: FlexFit.tight,
-                  ),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: GestureDetector(
-                      child: Container(
-                        padding: EdgeInsets.only(right: 30),
-                        child: Text("确认提交"),
-                      ),
-                      onTap: () {
-                        _onConfirmClick(context);
-                      },
+                ),
+                Flexible(
+                  child: SizedBox(),
+                  fit: FlexFit.tight,
+                ),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: GestureDetector(
+                    child: Container(
+                      padding: EdgeInsets.only(right: 30),
+                      child: Text("确认提交"),
                     ),
+                    onTap: () {
+                      _onConfirmClick(context);
+                    },
                   ),
-                ],
-              ),
-            )
-          ],
-        ),
-      )),
-    );
+                ),
+              ],
+            ),
+          )
+        ],
+      ),
+    ));
   }
 
   List<Widget> _buildListView(context, data) {
@@ -191,11 +202,6 @@ class EditNoSendState extends State<EditNoSendPage> {
       slivers.add(sliverList);
     }
     return slivers;
-  }
-
-  Future<bool> _onWillPop() async {
-    _helper.deleteAllSendOrder();
-    return true;
   }
 
   _onDeleteClick(CompanyData companyData, GoodsData goodsData) {

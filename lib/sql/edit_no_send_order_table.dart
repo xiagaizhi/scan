@@ -5,11 +5,19 @@ class EditNoSendTable extends BaseTable {
   ///表名
   final String name = 'EditNoSendTable';
 
-  final String consignmentNumber = "consignmentNumber";
+  final String expressNo = "expressNo";
+  final String createTime = "createTime";
+  final String expressStatus = "expressStatus";
   final String id = "id";
+  final String needDeliver = "needDeliver";
+  final String orderFlag = "orderFlag";
   final String orderId = "orderId";
   final String orderNumber = "orderNumber";
-  final String sequenceNumber = "sequenceNumber";
+  final String status = "status";
+  final String supplierId = "supplierId";
+  final String supplierName = "supplierName";
+  final String taskId = "taskId";
+  final String taskItemId = "taskItemId";
   final String columnId = "columnId";
 
   @override
@@ -17,11 +25,19 @@ class EditNoSendTable extends BaseTable {
     return '''
         create table $name (
         $columnId integer primary key AUTOINCREMENT,
-        $consignmentNumber text,
-        $id text,
+        $id integer,
+        $expressNo text ,
+        $createTime text ,
+        $expressStatus text ,
+        $needDeliver integer,
+        $orderFlag text ,
         $orderId text ,
         $orderNumber text ,
-        $sequenceNumber text 
+        $status text ,
+        $supplierId text ,
+        $supplierName text ,
+        $taskId text ,
+        $taskItemId text
         )
       ''';
   }
@@ -33,6 +49,6 @@ class EditNoSendTable extends BaseTable {
 
   @override
   String getPrimaryString() {
-    return orderId;
+    return taskItemId;
   }
 }

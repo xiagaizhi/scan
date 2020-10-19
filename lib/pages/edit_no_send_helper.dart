@@ -1,8 +1,10 @@
 import 'dart:async';
 
+import 'package:scan/model/edit_order_data.dart';
 import 'package:scan/model/order_data.dart';
 import 'package:scan/model/result_data.dart';
-import 'package:scan/sql/no_send_order_table.dart';
+import 'package:scan/model/web_qr_code_data.dart';
+import 'package:scan/sql/edit_no_send_order_table.dart';
 import 'package:scan/sql/sql_helper.dart';
 import 'package:scan/utils/NetWorkUtil.dart';
 import 'package:scan/utils/ToastUtils.dart';
@@ -18,7 +20,7 @@ class EditNoSendOrderData with _NoSendMoreBloc {
         for (BatchData batchData in company.batchList) {
           if (batchData.batchNumber == data.taskId) {
             GoodsData goodsData =
-            GoodsData(data.taskItemId, data.taskItemId, data.needDeliver);
+                GoodsData(data.taskItemId, data.taskItemId, data.needDeliver);
             batchData.goodsList.add(goodsData);
             onDataChanged(this);
             return;
@@ -28,7 +30,7 @@ class EditNoSendOrderData with _NoSendMoreBloc {
         batchData.batchNumber = data.taskId;
         List<GoodsData> goodsList = List();
         GoodsData goodsData =
-        GoodsData(data.taskItemId, data.taskItemId, data.needDeliver);
+            GoodsData(data.taskItemId, data.taskItemId, data.needDeliver);
         goodsList.add(goodsData);
         batchData.goodsList = goodsList;
         company.batchList.add(batchData);
@@ -44,7 +46,7 @@ class EditNoSendOrderData with _NoSendMoreBloc {
     batchData.batchNumber = data.taskId;
     List<GoodsData> goodsList = List();
     GoodsData goodsData =
-    GoodsData(data.taskItemId, data.taskItemId, data.needDeliver);
+        GoodsData(data.taskItemId, data.taskItemId, data.needDeliver);
     goodsList.add(goodsData);
     batchData.goodsList = goodsList;
     batchList.add(batchData);
@@ -53,13 +55,23 @@ class EditNoSendOrderData with _NoSendMoreBloc {
     onDataChanged(this);
   }
 
-  initData() async {
+  initData(WebQrCodeData webQrCodeData) async {
     print("build init data---------------------");
+    EditNoSendTable editNoSendTable = EditNoSendTable();
+    if (webQrCodeData != null) {
+      ResultData resultData = await NetWorkUtil.getNoSendOrderList(
+          webQrCodeData.printTaskId, webQrCodeData.id);
+      for (Map<String, dynamic> map in resultData.data) {
+        EditOrderData editOrderData = EditOrderData();
+        editOrderData.fromJson(map);
+        OrderData orderData = editOrderData.cast2OrderData(webQrCodeData);
+        await SqlHelper.insert(editNoSendTable, orderData.toJson());
+      }
+    }
     orderDataList = List();
     dataList = List();
-    OrderTable orderTable = OrderTable();
     // SqlHelper.deleteAll(orderTable);
-    List<Map<String, dynamic>> list = await SqlHelper.queryAll(orderTable);
+    List<Map<String, dynamic>> list = await SqlHelper.queryAll(editNoSendTable);
     print(list.length);
     for (Map<String, dynamic> map in list) {
       OrderData data = new OrderData();
@@ -116,19 +128,19 @@ class EditNoSendOrderData with _NoSendMoreBloc {
         }
       }
     }
-    OrderTable orderTable = OrderTable();
-    await SqlHelper.update(orderTable,
+    EditNoSendTable editNoSendTable = EditNoSendTable();
+    await SqlHelper.update(editNoSendTable,
         {"taskItemId": item.taskItemId, "needDeliver": item.needDeliver});
     onDataChanged(this);
   }
 
   postSendGoods(context) async {
-    OrderTable orderTable = OrderTable();
-    List<Map<String, dynamic>> list = await SqlHelper.queryAll(orderTable);
+    EditNoSendTable editNoSendTable = EditNoSendTable();
+    List<Map<String, dynamic>> list = await SqlHelper.queryAll(editNoSendTable);
     ResultData resultData = await NetWorkUtil.updateNoSendOrder(list);
     if (resultData.isSuccess()) {
       ToastUtils.showToast_1("操作成功");
-      SqlHelper.deleteAll(orderTable);
+      SqlHelper.deleteAll(editNoSendTable);
       dataList = List();
     } else {
       DialogManger.getInstance().showNormalDialog(context, resultData.errorMsg);
@@ -136,15 +148,21 @@ class EditNoSendOrderData with _NoSendMoreBloc {
     onDataChanged(this);
   }
 
-  deleteAllSendOrder() {
-    OrderTable orderTable = OrderTable();
-    SqlHelper.deleteByColumn(orderTable, "needDeliver", 1);
-    onDataChanged(this);
+  deleteAll() {
+    EditNoSendTable editNoSendTable = EditNoSendTable();
+    SqlHelper.deleteAll(editNoSendTable);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    deleteAll();
   }
 }
 
 class _NoSendMoreBloc<T> {
-  final _noSendController = new StreamController<EditNoSendOrderData>.broadcast();
+  final _noSendController =
+      new StreamController<EditNoSendOrderData>.broadcast();
 
   Stream<EditNoSendOrderData> get dataStream => _noSendController.stream;
 

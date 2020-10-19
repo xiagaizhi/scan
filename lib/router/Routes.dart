@@ -12,6 +12,7 @@ class Routes {
   static String login = "/login";
   static String sendGoods = "/sendGoods";
   static String failureOrder = "/failureOrder";
+  static String editNoSendOrder = "/EditNoSendPage";
 
   static void configureRoutes(Router router) {
     /// 第一个参数是路由地址，第二个参数是页面跳转和传参，第三个参数是默认的转场动画，可以看上图
@@ -20,6 +21,7 @@ class Routes {
     router.define(noSendConfirm,
         handler: RouteHandlers.normalHandler(new NoSendOrderPage()));
     router.define(sendGoods, handler: RouteHandlers.sendGoodsHandler);
+    router.define(editNoSendOrder, handler: RouteHandlers.editNoSendHandler);
     router.define(failureOrder,
         handler: RouteHandlers.normalHandler(new FailureOrderPage()));
     router.notFoundHandler = new Handler(

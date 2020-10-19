@@ -1,5 +1,6 @@
 import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
+import 'package:scan/pages/edit_no_send_order.dart';
 import 'package:scan/pages/send_goods.dart';
 
 class RouteHandlers {
@@ -19,6 +20,15 @@ class RouteHandlers {
       data: data,
     );
   });
+  static var editNoSendHandler = new Handler(
+      handlerFunc: (BuildContext context, Map<String, dynamic> params) {
+        String data = params["data"]?.first;
+
+        /// 下面转换为真实想要的类型
+        return EditNoSendPage(
+          scanResult: data,
+        );
+      });
 
 // static var returnPramsHandler =  new Handler(
 //     handlerFunc: (BuildContext context, Map<String, List<Object>> params) {

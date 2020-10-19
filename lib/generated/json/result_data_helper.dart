@@ -1,4 +1,5 @@
 import 'package:scan/model/result_data.dart';
+import 'package:scan/network/network_ststus.dart';
 
 resultDataFromJson(ResultData data, Map<String, dynamic> json) {
 	if (json['errorCode'] != null) {
