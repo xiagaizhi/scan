@@ -91,75 +91,77 @@ class FailureOrderState extends State<FailureOrderPage> {
     );
   }
 
-  List<Widget> _buildListView(context, data) {
+  List<Widget> _buildListView(context, FailureOrderHelper data) {
     List<SliverList> slivers = List();
-    for (int i = 0; i < data.dataList.length; i++) {
-      FailureCompanyData companyData = data.dataList[i];
-      SliverList sliverList = SliverList(
-        delegate:
-            new SliverChildBuilderDelegate((BuildContext context, int index) {
-          //创建列表项
-          GoodsData item = companyData.goodsList[index];
-          return Column(
-            children: <Widget>[
-              Offstage(
-                offstage: index != 0,
-                child: Row(
-                  children: <Widget>[
-                    Icon(Icons.card_giftcard),
-                    Text("${companyData.name}"),
-                    Container(
-                      padding: EdgeInsets.only(left: 18),
-                      child: Text("${data.totalGoods(companyData.goodsList)}条"),
-                    )
-                  ],
-                ),
+    SliverList sliverList = SliverList(
+      delegate:
+          new SliverChildBuilderDelegate((BuildContext context, int index) {
+        //创建列表项
+
+        FailureCompanyData companyData = data.dataList[index];
+        return Offstage(
+          offstage: _helper.isHideSupplier(companyData),
+          child: ExpansionTile(
+            title: Container(
+              padding: EdgeInsets.only(left: 0),
+              child: Row(
+                children: <Widget>[
+                  Icon(Icons.card_giftcard),
+                  Text("${companyData.name}"),
+                  Container(
+                    padding: EdgeInsets.only(left: 18),
+                    child: Text("${data.totalGoods(companyData.goodsList)}条"),
+                  )
+                ],
               ),
-              Offstage(
-                offstage: item.needDeliver == 1,
-                child: Container(
-                  padding: EdgeInsets.only(left: 15, right: 5),
-                  height: 70,
-                  child: Row(
-                    children: <Widget>[
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Container(
-                            alignment: Alignment.center,
-                            child: Text(
-                                "快递单号:${companyData.goodsList[index].expressNumber}"),
-                          ),
-                          Padding(padding: EdgeInsets.only(top: 7, bottom: 7)),
-                          Container(
-                            alignment: Alignment.center,
-                            child: Text("订单号:${item.taskItemId}"),
-                          ),
-                        ],
+            ),
+            children: companyData.goodsList
+                .map((item) => Offstage(
+                      offstage: item.needDeliver == 1,
+                      child: Container(
+                        padding: EdgeInsets.only(left: 15, right: 5),
+                        height: 70,
+                        child: Row(
+                          children: <Widget>[
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Container(
+                                  alignment: Alignment.center,
+                                  child: Text("快递单号:${item.expressNumber}"),
+                                ),
+                                Padding(
+                                    padding:
+                                        EdgeInsets.only(top: 7, bottom: 7)),
+                                Container(
+                                  alignment: Alignment.center,
+                                  child: Text("订单号:${item.taskItemId}"),
+                                ),
+                              ],
+                            ),
+                            Flexible(
+                              child: SizedBox(),
+                              fit: FlexFit.tight,
+                            ),
+                            Align(
+                                alignment: Alignment.centerRight,
+                                child: GestureDetector(
+                                  child: Text("删除"),
+                                  onTap: () {
+                                    _onDeleteClick(companyData, item);
+                                  },
+                                ))
+                          ],
+                        ),
                       ),
-                      Flexible(
-                        child: SizedBox(),
-                        fit: FlexFit.tight,
-                      ),
-                      Align(
-                          alignment: Alignment.centerRight,
-                          child: GestureDetector(
-                            child: Text("删除"),
-                            onTap: () {
-                              _onDeleteClick(companyData, item);
-                            },
-                          ))
-                    ],
-                  ),
-                ),
-              )
-            ],
-          );
-        }, childCount: companyData.goodsList.length),
-      );
-      slivers.add(sliverList);
-    }
+                    ))
+                .toList(),
+          ),
+        );
+      }, childCount: data.dataList.length),
+    );
+    slivers.add(sliverList);
     return slivers;
   }
 

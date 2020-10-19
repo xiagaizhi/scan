@@ -30,8 +30,8 @@ class FailureOrderHelper with _FailureOrderBloc {
   handleCompanyData(ExpressData expressData) {
     for (FailureCompanyData companyData in dataList) {
       if (companyData.id == expressData.supplierId) {
-        GoodsData goodsData = GoodsData(
-            expressData.orderId, expressData.orderId, expressData.needDeliver);
+        GoodsData goodsData = GoodsData(expressData.expressNo,
+            expressData.orderId, expressData.needDeliver);
         companyData.goodsList.add(goodsData);
         onDataChanged(this);
         return;
@@ -42,10 +42,19 @@ class FailureOrderHelper with _FailureOrderBloc {
     data.id = expressData.supplierId;
     data.goodsList = List();
     GoodsData goodsData = GoodsData(
-        expressData.orderId, expressData.orderId, expressData.needDeliver);
+        expressData.expressNo, expressData.orderId, expressData.needDeliver);
     data.goodsList.add(goodsData);
     dataList.add(data);
     onDataChanged(this);
+  }
+
+  isHideSupplier(FailureCompanyData companyData) {
+    for (GoodsData goodsData in companyData.goodsList) {
+      if (goodsData.needDeliver == 0) {
+        return false;
+      }
+    }
+    return true;
   }
 
   postSendGoods(context) async {
