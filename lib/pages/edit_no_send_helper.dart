@@ -8,7 +8,7 @@ import 'package:scan/utils/NetWorkUtil.dart';
 import 'package:scan/utils/ToastUtils.dart';
 import 'package:scan/utils/dialog_manager.dart';
 
-class NoSendOrderData with _NoSendMoreBloc {
+class EditNoSendOrderData with _NoSendMoreBloc {
   List<CompanyData> dataList = List();
   List<OrderData> orderDataList = List();
 
@@ -18,7 +18,7 @@ class NoSendOrderData with _NoSendMoreBloc {
         for (BatchData batchData in company.batchList) {
           if (batchData.batchNumber == data.taskId) {
             GoodsData goodsData =
-                GoodsData(data.taskItemId, data.taskItemId, data.needDeliver);
+            GoodsData(data.taskItemId, data.taskItemId, data.needDeliver);
             batchData.goodsList.add(goodsData);
             onDataChanged(this);
             return;
@@ -28,7 +28,7 @@ class NoSendOrderData with _NoSendMoreBloc {
         batchData.batchNumber = data.taskId;
         List<GoodsData> goodsList = List();
         GoodsData goodsData =
-            GoodsData(data.taskItemId, data.taskItemId, data.needDeliver);
+        GoodsData(data.taskItemId, data.taskItemId, data.needDeliver);
         goodsList.add(goodsData);
         batchData.goodsList = goodsList;
         company.batchList.add(batchData);
@@ -44,7 +44,7 @@ class NoSendOrderData with _NoSendMoreBloc {
     batchData.batchNumber = data.taskId;
     List<GoodsData> goodsList = List();
     GoodsData goodsData =
-        GoodsData(data.taskItemId, data.taskItemId, data.needDeliver);
+    GoodsData(data.taskItemId, data.taskItemId, data.needDeliver);
     goodsList.add(goodsData);
     batchData.goodsList = goodsList;
     batchList.add(batchData);
@@ -144,13 +144,13 @@ class NoSendOrderData with _NoSendMoreBloc {
 }
 
 class _NoSendMoreBloc<T> {
-  final _noSendController = new StreamController<NoSendOrderData>.broadcast();
+  final _noSendController = new StreamController<EditNoSendOrderData>.broadcast();
 
-  Stream<NoSendOrderData> get dataStream => _noSendController.stream;
+  Stream<EditNoSendOrderData> get dataStream => _noSendController.stream;
 
-  Sink<NoSendOrderData> get dataSink => _noSendController.sink;
+  Sink<EditNoSendOrderData> get dataSink => _noSendController.sink;
 
-  void onDataChanged(NoSendOrderData noSendOrderData) {
+  void onDataChanged(EditNoSendOrderData noSendOrderData) {
     if (!_noSendController.isClosed)
       _noSendController.sink.add(noSendOrderData);
   }

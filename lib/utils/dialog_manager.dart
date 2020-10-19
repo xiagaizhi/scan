@@ -27,4 +27,37 @@ class DialogManger {
           );
         });
   }
+
+  show2ButtonDialog(BuildContext context,
+      {String title = "提示",
+      String content,
+      String confirmText = "确认",
+      Function callBack}) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text(title),
+            content: Container(
+              height: 30,
+              alignment: Alignment.center,
+              child: Text(content),
+            ),
+            actions: <Widget>[
+              FlatButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text('取消'),
+              ),
+              FlatButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  callBack();
+                },
+                textColor: Colors.red,
+                child: Text(confirmText),
+              ),
+            ],
+          );
+        });
+  }
 }

@@ -138,7 +138,7 @@ class _QRCodePageState extends State<QRCodePage> with ICallBack {
           ),
           leading: InkWell(
             onTap: () {
-              NavigatorUtil.go(context, Routes.noSendConfirm);
+              PageUtil.scanQrCode(context, true);
             },
             child: Container(
               alignment: Alignment.center,

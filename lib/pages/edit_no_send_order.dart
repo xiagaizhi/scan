@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:scan/pages/edit_no_send_helper.dart';
 import 'package:scan/utils/PageUtil.dart';
-import 'package:scan/pages/no_send_order_helper.dart';
 import 'package:scan/utils/dialog_manager.dart';
 
-class NoSendOrderPage extends StatefulWidget {
+class EditNoSendPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return NoSendOrderState();
+    return EditNoSendState();
   }
 }
 
-class NoSendOrderState extends State<NoSendOrderPage> {
-  NoSendOrderData _helper = NoSendOrderData();
+class EditNoSendState extends State<EditNoSendPage> {
+  EditNoSendOrderData _helper = EditNoSendOrderData();
 
   @override
   void initState() {
@@ -32,7 +32,7 @@ class NoSendOrderState extends State<NoSendOrderPage> {
       child: SafeArea(
           child: Scaffold(
         appBar: AppBar(
-          title: Text("不发货面单确认"),
+          title: Text("修改不发货面单"),
         ),
         body: Column(
           children: <Widget>[
@@ -57,7 +57,7 @@ class NoSendOrderState extends State<NoSendOrderPage> {
                     child: GestureDetector(
                       child: Container(
                         padding: EdgeInsets.only(left: 30),
-                        child: Text("继续扫码"),
+                        child: Text("添加面单"),
                       ),
                       onTap: () {
                         _onReStartScanClick(context);
@@ -101,8 +101,6 @@ class NoSendOrderState extends State<NoSendOrderPage> {
       ),
     );
     slivers.add(tip);
-    print("--------------------------------------");
-    print(data);
     for (int i = 0; i < data.dataList.length; i++) {
       CompanyData companyData = data.dataList[i];
       SliverList sliverList = SliverList(
@@ -208,12 +206,10 @@ class NoSendOrderState extends State<NoSendOrderPage> {
   }
 
   _onReStartScanClick(BuildContext context) {
-    print("继续扫码");
     PageUtil.scanNoSend(context, false);
   }
 
   _onConfirmClick(parentContext) {
-    print("确认提交");
     DialogManger.getInstance()
         .show2ButtonDialog(context, content: "确认提交不发货面单信息", callBack: () async {
       _helper.postSendGoods(context);
