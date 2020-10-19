@@ -49,26 +49,29 @@ class SendGoodsState extends State<SendGoodsPage> {
               children: <Widget>[
                 Flexible(
                   fit: FlexFit.tight,
-                  child: Container(
-                      padding: EdgeInsets.only(
-                          left: 16.0, top: 8.0, right: 16.0, bottom: 6.0),
-                      child: Column(
-                        children: <Widget>[
-                          new SizedBox(
-                            height: 10,
-                          ),
-                          _buildCompany(),
-                          new SizedBox(
-                            height: 10,
-                          ),
-                          Divider(height: 1),
-                          new SizedBox(
-                            height: 10,
-                          ),
-                          _buildAddress(),
-                          _buildList(),
-                        ],
-                      )),
+                  child:SingleChildScrollView(
+                    child:  Container(
+                        padding: EdgeInsets.only(
+                            left: 16.0, top: 8.0, right: 16.0, bottom: 6.0),
+                        child: Column(
+                          children: <Widget>[
+                            new SizedBox(
+                              height: 10,
+                            ),
+                            _buildCompany(),
+                            new SizedBox(
+                              height: 10,
+                            ),
+                            Divider(height: 1),
+                            new SizedBox(
+                              height: 10,
+                            ),
+                            _buildAddress(),
+                            _buildList(),
+                          ],
+                        )),
+                  )
+
                 ),
                 Container(
                   height: 60,
@@ -87,10 +90,14 @@ class SendGoodsState extends State<SendGoodsPage> {
                           child: GestureDetector(
                             child: Container(
                               alignment: Alignment.center,
-                              child: Text("重新扫码",style: TextStyle(color: Colors.white,fontSize: 14),),
+                              child: Text(
+                                "重新扫码",
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 14),
+                              ),
                             ),
                             onTap: () {
-                              PageUtil.scanSingleSend(context,true);
+                              PageUtil.scanSingleSend(context, true);
                             },
                           ),
                         ),
@@ -111,7 +118,8 @@ class SendGoodsState extends State<SendGoodsPage> {
                               alignment: Alignment.center,
                               child: Text(
                                 "确认发货",
-                                style: TextStyle(color: Colors.white,fontSize: 14),
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 14),
                               ),
                             ),
                             onTap: () {
@@ -441,7 +449,7 @@ class SendGoodsState extends State<SendGoodsPage> {
       "expressStatus": ['0'],
       "status": ['1', '3']
     });
-    if(resultData.status != 'OK'){
+    if (resultData.status != 'OK') {
       ToastUtils.showToast_1(resultData.errorMsg.toString());
       return;
     }
@@ -461,7 +469,7 @@ class SendGoodsState extends State<SendGoodsPage> {
     ResultData resultData = await HttpManager.getInstance(type: UrlType.order)
         .post("/admin/order/detail", {"orderId": orderId});
 
-    if(resultData.status != 'OK'){
+    if (resultData.status != 'OK') {
       ToastUtils.showToast_1(resultData.errorMsg.toString());
       return;
     }
@@ -529,7 +537,7 @@ class SendGoodsState extends State<SendGoodsPage> {
               CupertinoDialogAction(
                 child: Text('继续发货'),
                 onPressed: () {
-                  PageUtil.scanSingleSend(context,true);
+                  PageUtil.scanSingleSend(context, true);
                 },
               ),
               CupertinoDialogAction(
@@ -566,7 +574,6 @@ class SendGoodsState extends State<SendGoodsPage> {
     };
     ResultData resultData = await HttpManager.getInstance(type: UrlType.order)
         .post("/admin/order/deliver-goods", data);
-
 
     if (resultData.status != 'OK') {
       showErrorDialog(resultData.errorMsg.toString());
