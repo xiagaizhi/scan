@@ -31,4 +31,11 @@ class NetWorkUtil {
         "/admin/print-task-item/get-base-order-by-express",
         {"expressNo": expressId});
   }
+
+  ///不需要发货列表
+  static Future<ResultData> getNoSendOrderList(id, supplierId) async {
+    return await HttpManager.getInstance(type: UrlType.logistics).post(
+        "/admin/print-task/not-need-deliver",
+        {"id": id, "supplierId": supplierId});
+  }
 }

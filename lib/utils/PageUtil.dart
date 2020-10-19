@@ -5,7 +5,7 @@ import 'package:scan/model/order_data.dart';
 import 'package:scan/model/result_data.dart';
 import 'package:scan/router/Routes.dart';
 import 'package:scan/sql/failure_order_table.dart';
-import 'package:scan/sql/order_table.dart';
+import 'package:scan/sql/no_send_order_table.dart';
 import 'package:scan/sql/sql_helper.dart';
 import 'package:scan/utils/NetWorkUtil.dart';
 import 'package:scan/utils/ToastUtils.dart';
@@ -107,6 +107,23 @@ class PageUtil {
     data = await ScanPlugin.startScan(config);
     if (data.backButtonType == StringConstant.BACK_TYPE_BUTTON) {
       NavigatorUtil.goPramPage(context, Routes.sendGoods, data);
+    }
+  }
+
+  static Future scanQrCode(BuildContext context, bool newPage) async {
+    ScanResultData data;
+    ScanConfigData config = ScanConfigData(
+        isSplashOn: true,
+        isContinuous: false,
+        isNeedButton: false,
+        buttonString: "扫码完毕",
+        tipString: Constants.SCAN_QR_WEB_TIP,
+        toastString: "扫码成功",
+        pageType: StringConstant.PAGE_NORMAL,
+        formatType: 1);
+    data = await ScanPlugin.startScan(config);
+    if (newPage && data.backButtonType == StringConstant.BACK_TYPE_BUTTON) {
+      NavigatorUtil.go(context, Routes.noSendConfirm);
     }
   }
 }
