@@ -8,6 +8,7 @@ class SqlHelper {
         await query(table, map["${table.getPrimaryString()}"].toString());
     if (list.length != 0) {
       print("---------------------重复添加----------------------");
+      await db.update(name, map);
       return -1;
     }
     return await db.insert(name, map);
