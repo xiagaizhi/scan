@@ -436,7 +436,7 @@ class SendGoodsState extends State<SendGoodsPage> {
     ResultData resultData =
         await HttpManager.getInstance(type: UrlType.logistics)
             .post("/admin/eorder-using/get-eorder-base-info", {
-      "expressNo": '252314540522',
+      "expressNo": number,
       "expressStatus": ['0'],
       "status": ['1', '3']
     });
