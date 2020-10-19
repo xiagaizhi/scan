@@ -1,7 +1,11 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:scan/constants/config.dart';
 import 'package:scan/constants/ienv.dart';
 import 'package:scan/model/result_data.dart';
@@ -42,7 +46,7 @@ class _QRCodePageState extends State<QRCodePage> with ICallBack {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String userStr = prefs.get(ShareUtils.userInfo);
     if (userStr == null || userStr == '') {
-      NavigatorUtil.go(context, Routes.login,replace: true);
+      NavigatorUtil.go(context, Routes.login, replace: true);
       return;
     }
     UserInfoEntity user = new UserInfoEntity();
@@ -65,7 +69,7 @@ class _QRCodePageState extends State<QRCodePage> with ICallBack {
 
     if (data.status != 'OK') {
       ToastUtils.showToast_1(data.errorMsg.toString());
-      NavigatorUtil.go(context, Routes.login,replace: true);
+      NavigatorUtil.go(context, Routes.login, replace: true);
       return;
     }
     UserInfoEntity userbean = new UserInfoEntity();
@@ -79,6 +83,8 @@ class _QRCodePageState extends State<QRCodePage> with ICallBack {
     super.dispose();
     ScanPlugin.remove(this);
   }
+  Timer _timer;
+  double _progress;
 
   @override
   Widget build(BuildContext context) {
@@ -149,7 +155,7 @@ class _QRCodePageState extends State<QRCodePage> with ICallBack {
             InkWell(
               onTap: () {
                 //跳转并关闭当前页面
-                NavigatorUtil.go(context, Routes.login,replace: true);
+                NavigatorUtil.go(context, Routes.login, replace: true);
               },
               child: Container(
                 alignment: Alignment.center,
