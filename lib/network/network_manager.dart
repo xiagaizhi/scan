@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:dio/adapter.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:scan/constants/config.dart';
 import 'package:scan/constants/ienv.dart';
 import 'package:scan/model/result_data.dart';
@@ -83,6 +84,8 @@ class HttpManager {
       print("httpUrl:"+url +"----");
       print("params:"+params.toString());
 
+      //加载模态框
+      EasyLoading.show(status: '加载中...');
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String token = prefs.get(ShareUtils.token);
       if(token!=null&&token!=''){
@@ -93,9 +96,12 @@ class HttpManager {
       response = await _dio.post(url, data: params);
 
     } on DioError catch (e) {
+      EasyLoading.dismiss();
       print(e);
     }
     print(response);
+    //关闭模态框
+    EasyLoading.dismiss();
     return response.data;
   }
 }
