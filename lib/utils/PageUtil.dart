@@ -68,7 +68,7 @@ class PageUtil {
       for (Map<String, dynamic> map in resultData.data) {
         ExpressData expressData = ExpressData();
         expressData.fromJson(map);
-        expressData.needDeliver = 1;
+        expressData.needDeliver = 0;
         await SqlHelper.insert(orderTable, expressData.toJson());
       }
     } else {

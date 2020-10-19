@@ -17,7 +17,6 @@ class NoSendOrderState extends State<NoSendOrderPage> {
   void initState() {
     super.initState();
     _helper.initData();
-    print("initState(");
   }
 
   @override
@@ -102,8 +101,6 @@ class NoSendOrderState extends State<NoSendOrderPage> {
       ),
     );
     slivers.add(tip);
-    print("--------------------------------------");
-    print(data);
     for (int i = 0; i < data.dataList.length; i++) {
       CompanyData companyData = data.dataList[i];
       SliverList sliverList = SliverList(
