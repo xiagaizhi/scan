@@ -7,6 +7,7 @@ import 'package:scan/model/result_data.dart';
 import 'package:scan/network/network_manager.dart';
 import 'package:scan/utils/ConvertUtil.dart';
 import 'package:scan/utils/PageUtil.dart';
+import 'package:scan/utils/ToastUtils.dart';
 import 'package:scan/view/empty-view.dart';
 import 'package:scan_plugin/data/scan_result_data.dart';
 import 'package:scan/pages/qr_scan_code.dart';
@@ -440,6 +441,10 @@ class SendGoodsState extends State<SendGoodsPage> {
       "expressStatus": ['0'],
       "status": ['1', '3']
     });
+    if(resultData.status != 'OK'){
+      ToastUtils.showToast_1(resultData.errorMsg.toString());
+      return;
+    }
     List<ExpressData> list = List();
     for (Map<String, dynamic> map in resultData.data) {
       ExpressData expressDataData = ExpressData();
@@ -455,6 +460,12 @@ class SendGoodsState extends State<SendGoodsPage> {
   getOrderDetail(String orderId) async {
     ResultData resultData = await HttpManager.getInstance(type: UrlType.order)
         .post("/admin/order/detail", {"orderId": orderId});
+
+    if(resultData.status != 'OK'){
+      ToastUtils.showToast_1(resultData.errorMsg.toString());
+      return;
+    }
+
     setState(() {
       mOrderDetailData = OrderDetailData();
       mOrderDetailData.fromJson(resultData.data);
@@ -556,7 +567,6 @@ class SendGoodsState extends State<SendGoodsPage> {
     ResultData resultData = await HttpManager.getInstance(type: UrlType.order)
         .post("/admin/order/deliver-goods", data);
 
-    print('ssssss');
 
     if (resultData.status != 'OK') {
       showErrorDialog(resultData.errorMsg.toString());
